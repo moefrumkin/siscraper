@@ -1,14 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React, { useState } from 'react';
 import './App.css'
+import SISState from './components/SISState';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [APIKey, setAPIKey] = useState<string | null>(null)
+
+  return APIKey ?
+    <SISState APIKey={APIKey} /> :
+    <KeyEntryBox onKeyChange={setAPIKey} />
+}
+
+const KeyEntryBox = (props: { onKeyChange(value: string): any }) => {
+  const [key, setAPIKey] = useState<string>()
 
   return (
-    <>
-    </>
+    <form onSubmit={(e) => { e.preventDefault(); key != undefined && props.onKeyChange(key) }}>
+      <label>Enter API Key: <input name="key" onChange={(e) => setAPIKey(e.target.value)} /></label>
+      <input type="submit" value="enter" />
+    </form>
   )
 }
 
