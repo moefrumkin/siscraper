@@ -1,15 +1,15 @@
-import axios from 'axios';
-import { error } from 'effect/Brand';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { firebaseFunctions } from '../firebase'
+import { httpsCallable } from 'firebase/functions';
 
-const SISState = (props: { APIKey: string }) => {
+const SISState = () => {
     const [loading, setLoading] = useState<Boolean>(true)
     const [data, setData] = useState<JSON>()
     const [error, setError] = useState<Error | null>(null)
 
     useEffect(() => {
-        axios.get(`https://sis.jhu.edu/api/classes/codes/schools?key=${props.APIKey}`)
-            .then(response => setData(response.data))
+        httpsCallable(firebaseFunctions, "getSchools")({})
+            .then(res => console.log(res))
             .catch(setError)
             .finally(() => setLoading(false))
     }, [])

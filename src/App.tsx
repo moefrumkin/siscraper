@@ -5,9 +5,7 @@ import SISState from './components/SISState';
 const App = () => {
   const [APIKey, setAPIKey] = useState<string | null>(null)
 
-  return APIKey ?
-    <SISState APIKey={APIKey} /> :
-    <KeyEntryBox onKeyChange={setAPIKey} />
+  return <SISState />
 }
 
 const KeyEntryBox = (props: { onKeyChange(value: string): any }) => {
