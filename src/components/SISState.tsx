@@ -13,14 +13,22 @@ type Department = {
     SchoolName: string
 }
 
+type Term = {
+    Name: string
+}
+
 const SISState = () => {
     const [loading, setLoading] = useState<Boolean>(true)
     const [schools, setSchools] = useState<Array<School>>([])
+    const [terms, setTerms] = useState<Array<Term>>([])
+
     const [selectedSchools, setSelectedSchools] = useState<Array<School>>([])
     const [selectedDepartments, setSelectedDeparments] = useState<Array<Department>>([])
+    const [selectedTerms, setSelectedTerms] = useState<Array<Term>>([])
 
     const [error, setError] = useState<Error | null>(null)
 
+    //TODO: synchronize finish
     useEffect(() => {
         httpsCallable<any, Array<School>>(firebaseFunctions, "getSchools")({})
             .then(result => {
@@ -39,6 +47,10 @@ const SISState = () => {
             .then(setSchools)
             .catch(setError)
             .finally(() => setLoading(false))
+
+        httpsCallable<any, Array<Term>>(firebaseFunctions, "getTerms")({})
+            .then(result => setTerms(result.data))
+            .catch(setError)
     }, [])
 
     return (
@@ -56,6 +68,11 @@ const SISState = () => {
                         )}
                         onChange={selection => setSelectedDeparments(selection.map(selection => selection.value))}
                     />
+                    <Select isMulti
+                        options={terms.map(term => ({ value: term, label: term.Name }))}
+                        onChange={selection => setSelectedTerms(selection.map(selection => selection.value))}
+                    />
+                    <button>Search Courses</button>
                 </div>}
         </div>
     )

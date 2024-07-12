@@ -46,3 +46,14 @@ export const getDepartments = onCall({}, (context) => {
 
     return departments;
 })
+
+export const getTerms = onCall({}, (_) => {
+    const terms = axios.get(`${APIBase}/codes/terms?key=${APIKey.value()}`)
+        .then(result => { return result.data })
+        .catch(error => {
+            logger.error(error);
+            throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
+        })
+
+    return terms;
+})
