@@ -33,3 +33,16 @@ export const getSchools = onCall({}, (_) => {
 
     return data;
 })
+
+export const getDepartments = onCall({}, (context) => {
+    const school = context.data.school;
+
+    const departments = axios.get(`${APIBase}/codes/departments/${school}?key=${APIKey.value()}`)
+        .then(result => { return result.data })
+        .catch(error => {
+            logger.error(error);
+            throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
+        })
+
+    return departments;
+})
