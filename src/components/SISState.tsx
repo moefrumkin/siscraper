@@ -2,20 +2,7 @@ import { useEffect, useState } from 'react';
 import { firebaseFunctions } from '../firebase'
 import { httpsCallable } from 'firebase/functions';
 import Select from 'react-select'
-
-type School = {
-    Name: string
-    Departments: Array<Department>
-}
-
-type Department = {
-    DepartmentName: string
-    SchoolName: string
-}
-
-type Term = {
-    Name: string
-}
+import { Course, Department, School, Term } from 'siscraper-shared';
 
 const SISState = () => {
     const [loading, setLoading] = useState<Boolean>(true)
@@ -25,6 +12,8 @@ const SISState = () => {
     const [selectedSchools, setSelectedSchools] = useState<Array<School>>([])
     const [selectedDepartments, setSelectedDeparments] = useState<Array<Department>>([])
     const [selectedTerms, setSelectedTerms] = useState<Array<Term>>([])
+
+    const [course, setCourses] = useState<Array<Course>>([])
 
     const [error, setError] = useState<Error | null>(null)
 
@@ -53,6 +42,15 @@ const SISState = () => {
             .catch(setError)
     }, [])
 
+    const searchClasses = () => {
+        httpsCallable<any, Array<Course>>(firebaseFunctions, "searchCourses")({
+            terms: selectedTerms,
+            schools: selectedSchools,
+            departments: selectedDepartments
+        }).then(result => setCourses(result.data))
+            .catch(setError)
+    }
+
     return (
         <div>
             {error && <APIError error={error} />}
@@ -72,7 +70,7 @@ const SISState = () => {
                         options={terms.map(term => ({ value: term, label: term.Name }))}
                         onChange={selection => setSelectedTerms(selection.map(selection => selection.value))}
                     />
-                    <button>Search Courses</button>
+                    <button onClick={searchClasses}>Search Courses</button>
                 </div>}
         </div>
     )

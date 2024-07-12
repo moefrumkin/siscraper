@@ -9,8 +9,9 @@
 
 import axios from "axios";
 import { defineString } from "firebase-functions/params";
-import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https";
+import { HttpsError, onCall } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
+import { isSearchContext } from 'siscraper-shared'
 
 const APIKey = defineString('SIS_API_KEY');
 const APIBase = "https://sis.jhu.edu/api/classes"
@@ -56,4 +57,12 @@ export const getTerms = onCall({}, (_) => {
         })
 
     return terms;
+})
+
+export const searchCourses = onCall({}, (context) => {
+    const config = context.data;
+
+    if (!isSearchContext(config)) {
+        throw new HttpsError('invalid-argument', `Malformed Search Configuration: ${JSON.stringify(config)}`)
+    }
 })
