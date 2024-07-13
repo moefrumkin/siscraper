@@ -9,7 +9,7 @@
 
 import axios from "axios";
 import { defineString } from "firebase-functions/params";
-import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https";
+import { HttpsError, onCall } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 
 const APIKey = defineString('SIS_API_KEY');
@@ -57,3 +57,34 @@ export const getTerms = onCall({}, (_) => {
 
     return terms;
 })
+
+export const searchCourses = onCall({}, context => {
+    const request = context.data
+
+    if (!isSearchContext(request)) {
+        throw new HttpsError('invalid-argument', `Malformed search request`)
+    }
+
+    const courses = axios.get(encodeURI(`${APIBase}/${request.schools[0]}/${request.terms[0]}?key=${APIKey.value()}`))
+        .then(result => { return result.data })
+        .catch(error => {
+            logger.error(error);
+            throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
+        })
+
+    return courses;
+})
+
+export type SearchContext = {
+    terms: Array<string>,
+    schools: Array<string>,
+    departments: Array<string>
+}
+
+export const isSearchContext = (context: any): context is SearchContext => {
+    const isArrayOfString = (arr: any): arr is Array<string> => (
+        Array.isArray(arr) && arr.every(el => typeof el === "string")
+    )
+
+    return isArrayOfString(context.terms) && isArrayOfString(context.schools) && isArrayOfString(context.departments)
+}
