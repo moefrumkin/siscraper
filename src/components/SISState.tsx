@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { firebaseFunctions } from '../firebase'
 import { httpsCallable } from 'firebase/functions';
-import Select from 'react-select'
+import Select, { CSSObjectWithLabel } from 'react-select'
 import { AgGridReact } from 'ag-grid-react';
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css"
 
 type School = {
     Name: string
@@ -59,7 +61,7 @@ type Course = {
     SectionDetail: string
 }
 
-const CourseHeader = {
+const CourseHeader: { [key in (keyof Course)]: string } = {
     TermStartDate: "Term Start Date",
     SchoolName: "School Name",
     CoursePrefix: "Course Prefix",
@@ -76,7 +78,7 @@ const CourseHeader = {
     DOWSort: "Days of Week for Sort",
     TimeofDay: "Does Instructor Have Bio",
     SubDepartment: "Subdepartment",
-    SectionRegRestrictions: "Sections Registration Restriction",
+    SectionRegRestriction: "Sections Registration Restriction",
     Prerequisite: "Prerequisites",
     SeatsAvailable: "Seats Available",
     MaxSeats: "Maximum Seats",
@@ -110,6 +112,8 @@ const SISState = () => {
     const [selectedTerms, setSelectedTerms] = useState<Array<Term>>([])
 
     const [courses, setCourses] = useState<Array<Course>>([])
+
+    const [headers, setHeaders] = useState<Array<keyof Course>>(['OfferingName', 'Title', 'InstructorsFullName'])
 
     const [error, setError] = useState<Error | null>(null)
 
@@ -148,33 +152,51 @@ const SISState = () => {
             .catch(setError)
     }
 
+    const menuStyle = {
+        option: (provided: CSSObjectWithLabel, _: any) => ({
+            ...provided,
+            color: "#000000"
+        })
+    }
+
     return (
         <div>
             {error && <APIError error={error} />}
             {loading ? <p>Loading</p> :
                 <div>
                     <Select isMulti
+                        styles={menuStyle}
                         options={schools.map(school => ({ value: school, label: school.Name }))}
                         onChange={selection => setSelectedSchools(selection.map(selection => selection.value))}
                     />
-                    <Select isMulti options={schools
+                    <Select isMulti
+                        styles={menuStyle}
+                        options={schools
                         .flatMap(school => school.Departments
                             .map(department => ({ value: department, label: department.DepartmentName }))
                         )}
                         onChange={selection => setSelectedDeparments(selection.map(selection => selection.value))}
                     />
                     <Select isMulti
+                        styles={menuStyle}
                         options={terms.map(term => ({ value: term, label: term.Name }))}
                         onChange={selection => setSelectedTerms(selection.map(selection => selection.value))}
                     />
                     <button onClick={searchCourses}>Search Courses</button>
-                    {courses.length > 0 && <div className='ag-theme-quartz'><AgGridReact<Course>
-                        rowData={courses}
-                        columnDefs={[{ headerName: "Name", field: "Title" }]} /></div>}
+                    {courses.length > 0 && <div className='ag-theme-quartz' style={{ height: "50em", width: "100em" }}>
+                        <AgGridReact<Course>
+                            pagination={true}
+                            paginationPageSize={500}
+                            paginationPageSizeSelector={[200, 500, 2000]}
+                            rowData={courses}
+                            columnDefs={headers.map(key => ({ headerName: CourseHeader[key], field: key }))} />
+                    </div>}
                 </div>}
         </div>
     )
 }
+
+
 
 const APIError = (props: { error: Error }) => (
     <div>
