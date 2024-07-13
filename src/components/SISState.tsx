@@ -5,6 +5,7 @@ import Select, { CSSObjectWithLabel } from 'react-select'
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css"
+import { ProviderId } from 'firebase/auth';
 
 type School = {
     Name: string
@@ -156,7 +157,7 @@ const SISState = () => {
         option: (provided: CSSObjectWithLabel, _: any) => ({
             ...provided,
             color: "#000000"
-        })
+        }),
     }
 
     return (
@@ -169,13 +170,21 @@ const SISState = () => {
                         options={schools.map(school => ({ value: school, label: school.Name }))}
                         onChange={selection => setSelectedSchools(selection.map(selection => selection.value))}
                     />
-                    <Select isMulti
+                    <Select<{ value: Department, label: string }, true, { value: School, label: string, readonly options: readonly { value: Department, label: string }[] }> isMulti
                         styles={menuStyle}
+
                         options={schools
-                        .flatMap(school => school.Departments
-                            .map(department => ({ value: department, label: department.DepartmentName }))
-                        )}
+                            .map(school => ({
+                                value: school,
+                                label: school.Name,
+                                options: school.Departments.map(department => ({ value: department, label: department.DepartmentName }))
+                            }))}
                         onChange={selection => setSelectedDeparments(selection.map(selection => selection.value))}
+                        formatGroupLabel={school => (
+                            <div>
+                                <span>{school.label}</span>
+                            </div>
+                        )}
                     />
                     <Select isMulti
                         styles={menuStyle}
