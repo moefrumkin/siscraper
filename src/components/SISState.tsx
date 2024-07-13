@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { firebaseFunctions } from '../firebase'
 import { httpsCallable } from 'firebase/functions';
 import Select from 'react-select'
+import { AgGridReact } from 'ag-grid-react';
 
 type School = {
     Name: string
@@ -167,17 +168,9 @@ const SISState = () => {
                         onChange={selection => setSelectedTerms(selection.map(selection => selection.value))}
                     />
                     <button onClick={searchCourses}>Search Courses</button>
-                    <table>
-                        <thead><tr>
-                            <th>Number</th><th>Name</th>
-                        </tr></thead>
-                        <tbody>
-                            {courses.map(course => <tr>
-                                <td>{course.OfferingName}</td>
-                                <td>{course.Title}</td>
-                            </tr>)}
-                        </tbody>
-                    </table>
+                    {courses.length > 0 && <div className='ag-theme-quartz'><AgGridReact<Course>
+                        rowData={courses}
+                        columnDefs={[{ headerName: "Name", field: "Title" }]} /></div>}
                 </div>}
         </div>
     )
