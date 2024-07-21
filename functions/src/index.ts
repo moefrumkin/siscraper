@@ -8,12 +8,10 @@
  */
 
 import axios from "axios";
-import { defineString } from "firebase-functions/params";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
+import { requestDepartments, requestSchools, requestTerms } from "./sisAPI";
 
-const APIKey = defineString('SIS_API_KEY');
-const APIBase = "https://sis.jhu.edu/api/classes"
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -24,8 +22,8 @@ const APIBase = "https://sis.jhu.edu/api/classes"
 // });
 
 export const getSchools = onCall({}, (_) => {
-    const data = axios.get(`${APIBase}/codes/schools?key=${APIKey.value()}`)
-        .then(result => { return result.data })
+    const data = requestSchools()
+        .then(result => { return result })
         .catch(error => {
             logger.error(error);
             throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
@@ -37,8 +35,8 @@ export const getSchools = onCall({}, (_) => {
 export const getDepartments = onCall({}, (context) => {
     const school = context.data.school;
 
-    const departments = axios.get(`${APIBase}/codes/departments/${school}?key=${APIKey.value()}`)
-        .then(result => { return result.data })
+    const departments = requestDepartments(school)
+        .then(result => { return result})
         .catch(error => {
             logger.error(error);
             throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
@@ -48,8 +46,8 @@ export const getDepartments = onCall({}, (context) => {
 })
 
 export const getTerms = onCall({}, (_) => {
-    const terms = axios.get(`${APIBase}/codes/terms?key=${APIKey.value()}`)
-        .then(result => { return result.data })
+    const terms = requestTerms()
+        .then(result => { return result })
         .catch(error => {
             logger.error(error);
             throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
@@ -65,14 +63,18 @@ export const searchCourses = onCall({}, context => {
         throw new HttpsError('invalid-argument', `Malformed search request`)
     }
 
-    const courses = axios.get(encodeURI(`${APIBase}/${request.schools[0]}/${request.terms[0]}?key=${APIKey.value()}`))
+    const query = `${request.terms.map(term => `Term=${term}`).join("&")}
+    &${request.departments.map(department => `Department=${department}`).join("&")}
+    &${request.schools.map(school => `School=${school}`).join("&")}`
+
+    /*/onst courses = axios.get(encodeURI(`${APIBase}?key=${APIKey.value()}&${query}`))
         .then(result => { return result.data })
         .catch(error => {
             logger.error(error);
             throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
         })
 
-    return courses;
+    return courses; */
 })
 
 export type SearchContext = {
