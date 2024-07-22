@@ -174,6 +174,7 @@ const SISState = () => {
                         styles={menuStyle}
 
                         options={schools
+                            .filter(school => !selectedSchools.includes(school))
                             .map(school => ({
                                 value: school,
                                 label: school.Name,
