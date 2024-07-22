@@ -61,87 +61,167 @@ type Course = {
     SectionDetail: string
 }
 
-const CourseHeader: { [key in (keyof Course)]: string } = {
-    TermStartDate: "Term Start Date",
-    SchoolName: "School Name",
-    CoursePrefix: "Course Prefix",
-    Term: "Term",
-    Term_IDR: "Term IDR",
-    OfferingName: "Offering Name",
-    SectionName: "Section Name",
-    Title: "Title",
-    Credits: "Credits",
-    Department: "Department",
-    Level: "Level",
-    Status: "Status",
-    DOW: "Days of Week",
-    DOWSort: "Days of Week for Sort",
-    TimeofDay: "Does Instructor Have Bio",
-    SubDepartment: "Subdepartment",
-    SectionRegRestriction: "Sections Registration Restriction",
-    Prerequisite: "Prerequisites",
-    SeatsAvailable: "Seats Available",
-    MaxSeats: "Maximum Seats",
-    OpenSeats: "Open Seats",
-    Waitlisted: "Waitlist Length",
-    IsWritingIntensive: "Writing Intensive",
-    AllDepartments: "All Departments",
-    Instructors: "Instructors",
-    InstructorsFullName: "Instructors Full Name",
-    Location: "Location",
-    Building: "Building",
-    HasBio: "Instructor Biography",
-    Meetings: "Meetings",
-    Areas: "Areas",
-    InstructionMethod: "Instruction Method",
-    SectionCoRequisites: "Section Corequisites",
-    SectionCoReqNotes: "Section Corequisite Notes",
-    SSS_SectionsID: "SSS_SectinsID",
-    Term_JSS: "Term JSS",
-    Repeatable: "Repeatable",
-    SectionDetail: "Section Detail"
+type ColumnMeta = {
+    name: keyof Course,
+    readableName: string
 }
 
-const CourseKeys: (keyof Course)[] = [
-    "TermStartDate",
-    "SchoolName",
-    "CoursePrefix",
-    "Term",
-    "Term_IDR",
-    "OfferingName",
-    "SectionName",
-    "Title",
-    "Credits",
-    "Department",
-    "Level",
-    "Status",
-    "DOW",
-    "DOWSort",
-    "TimeofDay",
-    "SubDepartment",
-    "SectionRegRestriction",
-    "Prerequisite",
-    "SeatsAvailable",
-    "MaxSeats",
-    "OpenSeats",
-    "Waitlisted",
-    "IsWritingIntensive",
-    "AllDepartments",
-    "Instructors",
-    "InstructorsFullName",
-    "Location",
-    "Building",
-    "HasBio",
-    "Meetings",
-    "Areas",
-    "InstructionMethod",
-    "SectionCoRequisites",
-    "SectionCoReqNotes",
-    "SSS_SectionsID",
-    "Term_JSS",
-    "Repeatable",
-    "SectionDetail"
-]
+const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
+    TermStartDate: {
+        name: "TermStartDate",
+        readableName: "Term Start Date"
+    },
+    SchoolName: {
+        name: "SchoolName",
+        readableName: "School Name"
+    },
+    CoursePrefix: {
+        name: "CoursePrefix",
+        readableName: "Course Prefix"
+    },
+    Term: {
+        name: "Term",
+        readableName: "Term"
+    },
+    Term_IDR: {
+        name: "Term_IDR",
+        readableName: "Term IDR"
+    },
+    OfferingName: {
+        name: "OfferingName",
+        readableName: "Offering Name"
+    },
+    SectionName: {
+        name: "SectionName",
+        readableName: "Section Name"
+    },
+    Title: {
+        name: "Title",
+        readableName: "Title"
+    },
+    Credits: {
+        name: "Credits",
+        readableName: "Credits"
+    },
+    Department: {
+        name: "Department",
+        readableName: "Department"
+    },
+    Level: {
+        name: "Level",
+        readableName: "Level"
+    },
+    Status: {
+        name: "Status",
+        readableName: "Status"
+    },
+    DOW: {
+        name: "DOW",
+        readableName: "Days of Week"
+    },
+    DOWSort: {
+        name: "DOWSort",
+        readableName: "Days of Week for Sort"
+    },
+    TimeofDay: {
+        name: "TimeofDay",
+        readableName: "Does Instructor Have Bio"
+    },
+    SubDepartment: {
+        name: "SubDepartment",
+        readableName: "Subdepartment"
+    },
+    SectionRegRestriction: {
+        name: "SectionRegRestriction",
+        readableName: "Sections Registration Restriction"
+    },
+    Prerequisite: {
+        name: "Prerequisite",
+        readableName: "Prerequisites"
+    },
+    SeatsAvailable: {
+        name: "SeatsAvailable",
+        readableName: "Seats Available"
+    },
+    MaxSeats: {
+        name: "MaxSeats",
+        readableName: "Maximum Seats"
+    },
+    OpenSeats: {
+        name: "OpenSeats",
+        readableName: "Open Seats"
+    },
+    Waitlisted: {
+        name: "Waitlisted",
+        readableName: "Waitlist Length"
+    },
+    IsWritingIntensive: {
+        name: "IsWritingIntensive",
+        readableName: "Writing Intensive"
+    },
+    AllDepartments: {
+        name: "AllDepartments",
+        readableName: "All Departments"
+    },
+    Instructors: {
+        name: "Instructors",
+        readableName: "Instructors"
+    },
+    InstructorsFullName: {
+        name: "InstructorsFullName",
+        readableName: "Instructors Full Name"
+    },
+    Location: {
+        name: "Location",
+        readableName: "Location"
+    },
+    Building: {
+        name: "Building",
+        readableName: "Building"
+    },
+    HasBio: {
+        name: "HasBio",
+        readableName: "Instructor Biography"
+    },
+    Meetings: {
+        name: "Meetings",
+        readableName: "Meetings"
+    },
+    Areas: {
+        name: "Areas",
+        readableName: "Areas"
+    },
+    InstructionMethod: {
+        name: "InstructionMethod",
+        readableName: "Instruction Method"
+    },
+    SectionCoRequisites: {
+        name: "SectionCoRequisites",
+        readableName: "Section Corequisites"
+    },
+    SectionCoReqNotes: {
+        name: "SectionCoReqNotes",
+        readableName: "Section Corequisite Notes"
+    },
+    SSS_SectionsID: {
+        name: "SSS_SectionsID",
+        readableName: "SSS_SectinsID"
+    },
+    Term_JSS: {
+        name: "Term_JSS",
+        readableName: "Term JSS"
+    },
+    Repeatable: {
+        name: "Repeatable",
+        readableName: "Repeatable"
+    },
+    SectionDetail: {
+        name: "SectionDetail",
+        readableName: "Section Detail"
+    }
+}
+
+const CourseKeys: (keyof Course)[] = Object.values(CourseHeader).map(data => data.name)
 
 const SISState = () => {
     const [loading, setLoading] = useState<Boolean>(true)
@@ -234,13 +314,17 @@ const SISState = () => {
                     />
                     <button onClick={searchCourses}>Search Courses</button>
                     <button onClick={() => {setCourses([]); setError(null)}}>Clear</button>
+                    <Select
+                        styles={menuStyle}
+                        options={Object.values(CourseHeader).map(header => ({value: header, label: header.readableName}))}
+                    />
                     {courses.length > 0 && <div className='ag-theme-quartz' style={{ height: "50em", width: "100em" }}>
                         <AgGridReact<Course>
                             pagination={true}
                             paginationPageSize={500}
                             paginationPageSizeSelector={[200, 500, 2000]}
                             rowData={courses}
-                            columnDefs={headers.map(key => ({ headerName: CourseHeader[key], field: key }))} />
+                            columnDefs={headers.map(key => ({ headerName: CourseHeader[key].readableName, field: key }))} />
                     </div>}
                 </div>}
         </div>
