@@ -5,7 +5,6 @@ import Select, { CSSObjectWithLabel } from 'react-select'
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css"
-import { ProviderId } from 'firebase/auth';
 
 type School = {
     Name: string
@@ -103,6 +102,47 @@ const CourseHeader: { [key in (keyof Course)]: string } = {
     SectionDetail: "Section Detail"
 }
 
+const CourseKeys: (keyof Course)[] = [
+    "TermStartDate",
+    "SchoolName",
+    "CoursePrefix",
+    "Term",
+    "Term_IDR",
+    "OfferingName",
+    "SectionName",
+    "Title",
+    "Credits",
+    "Department",
+    "Level",
+    "Status",
+    "DOW",
+    "DOWSort",
+    "TimeofDay",
+    "SubDepartment",
+    "SectionRegRestriction",
+    "Prerequisite",
+    "SeatsAvailable",
+    "MaxSeats",
+    "OpenSeats",
+    "Waitlisted",
+    "IsWritingIntensive",
+    "AllDepartments",
+    "Instructors",
+    "InstructorsFullName",
+    "Location",
+    "Building",
+    "HasBio",
+    "Meetings",
+    "Areas",
+    "InstructionMethod",
+    "SectionCoRequisites",
+    "SectionCoReqNotes",
+    "SSS_SectionsID",
+    "Term_JSS",
+    "Repeatable",
+    "SectionDetail"
+]
+
 const SISState = () => {
     const [loading, setLoading] = useState<Boolean>(true)
     const [schools, setSchools] = useState<Array<School>>([])
@@ -114,7 +154,7 @@ const SISState = () => {
 
     const [courses, setCourses] = useState<Array<Course>>([])
 
-    const [headers, setHeaders] = useState<Array<keyof Course>>(['OfferingName', 'Title', 'InstructorsFullName'])
+    const [headers, setHeaders] = useState<Array<keyof Course>>(CourseKeys)
 
     const [error, setError] = useState<Error | null>(null)
 
@@ -193,6 +233,7 @@ const SISState = () => {
                         onChange={selection => setSelectedTerms(selection.map(selection => selection.value))}
                     />
                     <button onClick={searchCourses}>Search Courses</button>
+                    <button onClick={() => {setCourses([]); setError(null)}}>Clear</button>
                     {courses.length > 0 && <div className='ag-theme-quartz' style={{ height: "50em", width: "100em" }}>
                         <AgGridReact<Course>
                             pagination={true}
