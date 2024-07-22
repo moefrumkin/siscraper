@@ -147,7 +147,7 @@ const SISState = () => {
         httpsCallable<any, Array<Course>>(firebaseFunctions, "searchCourses")({
             terms: selectedTerms.map(term => term.Name),
             schools: selectedSchools.map(school => school.Name),
-            departments: selectedDepartments.map(department => department.DepartmentName)
+            departments: selectedDepartments
         })
             .then(result => setCourses(result.data))
             .catch(setError)

@@ -7,10 +7,9 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import axios from "axios";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
-import { requestDepartments, requestSchools, requestTerms } from "./sisAPI";
+import { queryCourses, requestDepartments, requestSchools, requestTerms } from "./sisAPI";
 
 
 // Start writing functions
@@ -57,36 +56,52 @@ export const getTerms = onCall({}, (_) => {
 })
 
 export const searchCourses = onCall({}, context => {
-    const request = context.data
+    const query = context.data
 
-    if (!isSearchContext(request)) {
+    if (!isCourseQuery(query)) {
+        logger.error(`Malformed search request: ${query}`)
         throw new HttpsError('invalid-argument', `Malformed search request`)
     }
 
-    const query = `${request.terms.map(term => `Term=${term}`).join("&")}
-    &${request.departments.map(department => `Department=${department}`).join("&")}
-    &${request.schools.map(school => `School=${school}`).join("&")}`
-
-    /*/onst courses = axios.get(encodeURI(`${APIBase}?key=${APIKey.value()}&${query}`))
-        .then(result => { return result.data })
+    if(query.departments.length == 0 && query.schools.length == 0) {
+    const courses = queryCourses(query)
+        .then(result => { return result })
         .catch(error => {
             logger.error(error);
             throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
         })
 
-    return courses; */
+    return courses;
+    } else {
+        const courses = Promise.all([query.schools.map(school => queryCourses({terms: query.terms, schools: [school], departments: []})),
+    query.departments.map(department => queryCourses({terms: query.terms, schools: [], departments: [department]}))].flat()).then(result => {return result.flat(1);})
+    .catch(error => {
+        logger.error(error);
+        throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
+    })
+    return courses;
+    }
 })
 
-export type SearchContext = {
-    terms: Array<string>,
-    schools: Array<string>,
-    departments: Array<string>
+export type Department = {
+    DepartmentName: string,
+    SchoolName: string
 }
 
-export const isSearchContext = (context: any): context is SearchContext => {
+export const isDepartment = (department: any): department is Department => (
+    department.hasOwnProperty('DepartmentName') && department.hasOwnProperty("SchoolName")
+)
+
+export type CourseQuery = {
+    terms: Array<string>,
+    schools: Array<string>,
+    departments: Array<Department>
+}
+
+export const isCourseQuery = (context: any): context is CourseQuery => {
     const isArrayOfString = (arr: any): arr is Array<string> => (
         Array.isArray(arr) && arr.every(el => typeof el === "string")
     )
 
-    return isArrayOfString(context.terms) && isArrayOfString(context.schools) && isArrayOfString(context.departments)
+    return isArrayOfString(context.terms) && isArrayOfString(context.schools) && Array.isArray(context.departments) && context.departments.every((dept: any) => isDepartment(dept))
 }

@@ -28,8 +28,8 @@ test("Format term and school", () => {
 test("Format Complex", () => {
     const query = {
         terms: ["Fall 2020", "Spring 2021"],
-        schools: ["Whiting School of Engineering"],
-        departments: ["AS Near Eastern Studies"]
+        schools: [],
+        departments: [{DepartmentName: "AS Near Eastern Studies", SchoolName: "Whiting School of Engineering"}]
     }
 
     expect(formatCourseQuery(query)).toBe("Term=Fall 2020&Term=Spring 2021&School=Whiting School of Engineering&Department=AS Near Eastern Studies")
