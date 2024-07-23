@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { firebaseFunctions } from '../firebase'
 import { httpsCallable } from 'firebase/functions';
-import Select, { CSSObjectWithLabel } from 'react-select'
+import Select, { components, CSSObjectWithLabel, GroupBase, OptionProps, Props } from 'react-select'
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css"
@@ -314,9 +314,10 @@ const SISState = () => {
                     />
                     <button onClick={searchCourses}>Search Courses</button>
                     <button onClick={() => {setCourses([]); setError(null)}}>Clear</button>
-                    <Select
+                    <CheckboxMenu<{value: ColumnMeta, label: string}, GroupBase<{value: ColumnMeta, label: string}>>
                         styles={menuStyle}
                         options={Object.values(CourseHeader).map(header => ({value: header, label: header.readableName}))}
+                        name={"test"}
                     />
                     {courses.length > 0 && <div className='ag-theme-quartz' style={{ height: "50em", width: "100em" }}>
                         <AgGridReact<Course>
@@ -329,6 +330,27 @@ const SISState = () => {
                 </div>}
         </div>
     )
+}
+
+type CheckboxMenuOptions<Option = unknown, Group extends GroupBase<Option> = GroupBase<Option>> = Props<Option, true, Group> & {
+    name: string
+    onChange?: any
+}
+
+const CheckboxMenu = <Option, Group extends GroupBase<Option>>(props: CheckboxMenuOptions<Option, Group>) =>  {
+    const [selection, setSelection] = useState<Option[]>([]);
+
+    const Option = ({children, ...props}: OptionProps<Option, true, Group>) => {
+            // NOTE: we could also see if an item is in the selection, but that would be linear for each item
+            const [checked, setChecked] = useState<Boolean>(false);
+            return <components.Option 
+            {...props}
+            >
+                {children}
+                <input value = "test" type="checkbox"
+            /></components.Option>
+    }
+    return <Select<Option, true, Group> onChange={setSelection} isMulti {...props} components={{Option}}/>
 }
 
 
