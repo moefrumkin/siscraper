@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { firebaseFunctions } from '../firebase'
 import { httpsCallable } from 'firebase/functions';
-import Select, { components, CSSObjectWithLabel, GroupBase, OptionProps, Props } from 'react-select'
+import Select, { CSSObjectWithLabel, GroupBase } from 'react-select'
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css"
@@ -237,10 +237,8 @@ const DefaultColumns: ColumnMeta[] = [
     CourseHeader.Waitlisted
 ]
 
-const CourseKeys: (keyof Course)[] = Object.values(CourseHeader).map(data => data.name)
-
 const SISState = () => {
-    const [loading, setLoading] = useState<Boolean>(true)
+    const [loading, setLoading] = useState<boolean>(true)
     const [schools, setSchools] = useState<Array<School>>([])
     const [terms, setTerms] = useState<Array<Term>>([])
 
@@ -256,11 +254,11 @@ const SISState = () => {
 
     //TODO: synchronize finish
     useEffect(() => {
-        httpsCallable<any, Array<School>>(firebaseFunctions, "getSchools")({})
+        httpsCallable<void, Array<School>>(firebaseFunctions, "getSchools")()
             .then(result => {
                 const schools = result.data
 
-                const getDepartments = httpsCallable<any, Array<Department>>(firebaseFunctions, "getDepartments")
+                const getDepartments = httpsCallable<{school: string}, Array<Department>>(firebaseFunctions, "getDepartments")
                 return Promise.all(schools.map(school =>
                     getDepartments({ school: school.Name }).then(departments => {
                         return {
@@ -274,13 +272,14 @@ const SISState = () => {
             .catch(setError)
             .finally(() => setLoading(false))
 
-        httpsCallable<any, Array<Term>>(firebaseFunctions, "getTerms")({})
+        httpsCallable<void, Array<Term>>(firebaseFunctions, "getTerms")()
             .then(result => setTerms(result.data))
             .catch(setError)
     }, [])
 
     const searchCourses = () => {
-        httpsCallable<any, Array<Course>>(firebaseFunctions, "searchCourses")({
+        //TODO: Update the input type
+        httpsCallable<object, Array<Course>>(firebaseFunctions, "searchCourses")({
             terms: selectedTerms.map(term => term.Name),
             schools: selectedSchools.map(school => school.Name),
             departments: selectedDepartments
@@ -290,7 +289,7 @@ const SISState = () => {
     }
 
     const menuStyle = {
-        option: (provided: CSSObjectWithLabel, _: any) => ({
+        option: (provided: CSSObjectWithLabel, _: unknown) => ({
             ...provided,
             color: "#000000"
         }),

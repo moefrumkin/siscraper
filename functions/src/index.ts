@@ -7,9 +7,11 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import { HttpsError, onCall } from "firebase-functions/v2/https";
+import {HttpsError, onCall} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
-import { queryCourses, requestDepartments, requestSchools, requestTerms } from "./sisAPI";
+import {
+  queryCourses, requestDepartments, requestSchools, requestTerms,
+} from "./sisAPI";
 
 
 // Start writing functions
@@ -21,76 +23,92 @@ import { queryCourses, requestDepartments, requestSchools, requestTerms } from "
 // });
 
 export const getSchools = onCall({}, (_) => {
-    const data = requestSchools()
-        .then(result => { return result })
-        .catch(error => {
-            logger.error(error);
-            throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
-        })
+  const data = requestSchools()
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      logger.error(error);
+      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
+    });
 
-    return data;
-})
+  return data;
+});
 
 export const getDepartments = onCall({}, (context) => {
-    const school = context.data.school;
+  const school = context.data.school;
 
-    const departments = requestDepartments(school)
-        .then(result => { return result})
-        .catch(error => {
-            logger.error(error);
-            throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
-        })
+  const departments = requestDepartments(school)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      logger.error(error);
+      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
+    });
 
-    return departments;
-})
+  return departments;
+});
 
 export const getTerms = onCall({}, (_) => {
-    const terms = requestTerms()
-        .then(result => { return result })
-        .catch(error => {
-            logger.error(error);
-            throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
-        })
-
-    return terms;
-})
-
-export const searchCourses = onCall({}, context => {
-    const query = context.data
-
-    if (!isCourseQuery(query)) {
-        logger.error(`Malformed search request: ${query}`)
-        throw new HttpsError('invalid-argument', `Malformed search request`)
-    }
-
-    if(query.departments.length == 0 && query.schools.length == 0) {
-    const courses = queryCourses(query)
-        .then(result => { return result })
-        .catch(error => {
-            logger.error(error);
-            throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
-        })
-
-    return courses;
-    } else {
-        const courses = Promise.all([query.schools.map(school => queryCourses({terms: query.terms, schools: [school], departments: []})),
-    query.departments.map(department => queryCourses({terms: query.terms, schools: [], departments: [department]}))].flat()).then(result => {return result.flat(1);})
-    .catch(error => {
-        logger.error(error);
-        throw new HttpsError('internal', `An Internal Error Occured: ${error}`)
+  const terms = requestTerms()
+    .then((result) => {
+      return result;
     })
+    .catch((error) => {
+      logger.error(error);
+      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
+    });
+
+  return terms;
+});
+
+export const searchCourses = onCall({}, (context) => {
+  const query = context.data;
+
+  if (!isCourseQuery(query)) {
+    logger.error(`Malformed search request: ${query}`);
+    throw new HttpsError("invalid-argument", "Malformed search request");
+  }
+
+  if (query.departments.length == 0 && query.schools.length == 0) {
+    const courses = queryCourses(query)
+      .then((result) => {
+        return result;
+      })
+      .catch((error) => {
+        logger.error(error);
+        throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
+      });
+
     return courses;
-    }
-})
+  } else {
+    const courses = Promise.all([
+      query.schools.map((school) => queryCourses({
+        terms: query.terms, schools: [school], departments: [],
+      })),
+      query.departments.map((department) => queryCourses({
+        terms: query.terms, schools: [], departments: [department],
+      }))].flat()).then((result) => {
+      return result.flat(1);
+    })
+      .catch((error) => {
+        logger.error(error);
+        throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
+      });
+    return courses;
+  }
+});
 
 export type Department = {
     DepartmentName: string,
     SchoolName: string
 }
 
-export const isDepartment = (department: any): department is Department => (
-    department.hasOwnProperty('DepartmentName') && department.hasOwnProperty("SchoolName")
-)
+export const isDepartment = (department: unknown): department is Department => (
+  Object.prototype.hasOwnProperty.call(department, "DepartmentName") &&
+  Object.prototype.hasOwnProperty.call(department, "SchoolName")
+);
 
 export type CourseQuery = {
     terms: Array<string>,
@@ -98,10 +116,16 @@ export type CourseQuery = {
     departments: Array<Department>
 }
 
-export const isCourseQuery = (context: any): context is CourseQuery => {
-    const isArrayOfString = (arr: any): arr is Array<string> => (
-        Array.isArray(arr) && arr.every(el => typeof el === "string")
-    )
+export const isCourseQuery = (context: object): context is CourseQuery => {
+  const isArrayOfString = (arr: unknown): arr is Array<string> => (
+    Array.isArray(arr) && arr.every((el) => typeof el === "string")
+  );
 
-    return isArrayOfString(context.terms) && isArrayOfString(context.schools) && Array.isArray(context.departments) && context.departments.every((dept: any) => isDepartment(dept))
-}
+  return "terms" in context &&
+  isArrayOfString(context.terms) &&
+  "schools" in context &&
+  isArrayOfString(context.schools) &&
+  "departments" in context &&
+  Array.isArray(context.departments) &&
+  context.departments.every((dept: unknown) => isDepartment(dept));
+};
