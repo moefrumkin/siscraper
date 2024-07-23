@@ -22,7 +22,7 @@ import {
 //   response.send("Hello from Firebase!");
 // });
 
-export const getSchools = onCall({}, (_) => {
+export const getSchools = onCall((_) => {
   const data = requestSchools()
     .then((result) => {
       return result;
@@ -35,7 +35,7 @@ export const getSchools = onCall({}, (_) => {
   return data;
 });
 
-export const getDepartments = onCall({}, (context) => {
+export const getDepartments = onCall((context) => {
   const school = context.data.school;
 
   const departments = requestDepartments(school)
@@ -50,7 +50,7 @@ export const getDepartments = onCall({}, (context) => {
   return departments;
 });
 
-export const getTerms = onCall({}, (_) => {
+export const getTerms = onCall((_) => {
   const terms = requestTerms()
     .then((result) => {
       return result;
@@ -63,7 +63,7 @@ export const getTerms = onCall({}, (_) => {
   return terms;
 });
 
-export const searchCourses = onCall({}, (context) => {
+export const searchCourses = onCall((context) => {
   const query = context.data;
 
   if (!isCourseQuery(query)) {
