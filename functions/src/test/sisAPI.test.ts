@@ -1,36 +1,43 @@
-import { formatCourseQuery } from "../sisAPI"
+import {formatCourseQuery} from "../sisAPI";
 
 test("Formats empty query", () => {
-    const emptyQuery = {terms: [], schools: [], departments: []}
-    expect(formatCourseQuery(emptyQuery)).toBe('')
-})
+  const emptyQuery = {terms: [], schools: [], departments: []};
+  expect(formatCourseQuery(emptyQuery)).toBe("");
+});
 
 test("Format school query", () => {
-    const ksasQuery = {
-        terms: [],
-        schools: ["Krieger School of Arts and Sciences"],
-        departments: []
-    }
+  const ksasQuery = {
+    terms: [],
+    schools: ["Krieger School of Arts and Sciences"],
+    departments: [],
+  };
 
-    expect(formatCourseQuery(ksasQuery)).toBe('School=Krieger School of Arts and Sciences')
-})
+  expect(formatCourseQuery(ksasQuery))
+    .toBe("School=Krieger School of Arts and Sciences");
+});
 
 test("Format term and school", () => {
-    const query = {
-        terms: ["Fall 2010"],
-        schools: ["Carey Business School"],
-        departments: []
-    }
+  const query = {
+    terms: ["Fall 2010"],
+    schools: ["Carey Business School"],
+    departments: [],
+  };
 
-    expect(formatCourseQuery(query)).toBe('Term=Fall 2010&School=Carey Business School')
-})
+  expect(formatCourseQuery(query))
+    .toBe("Term=Fall 2010&School=Carey Business School");
+});
 
 test("Format Complex", () => {
-    const query = {
-        terms: ["Fall 2020", "Spring 2021"],
-        schools: [],
-        departments: [{DepartmentName: "AS Near Eastern Studies", SchoolName: "Whiting School of Engineering"}]
-    }
+  const query = {
+    terms: ["Fall 2020", "Spring 2021"],
+    schools: [],
+    departments: [{
+      DepartmentName: "AS Near Eastern Studies",
+      SchoolName: "Whiting School of Engineering",
+    }],
+  };
 
-    expect(formatCourseQuery(query)).toBe("Term=Fall 2020&Term=Spring 2021&School=Whiting School of Engineering&Department=AS Near Eastern Studies")
-})
+  expect(formatCourseQuery(query))
+    // eslint-disable-next-line max-len
+    .toBe("Term=Fall 2020&Term=Spring 2021&School=Whiting School of Engineering&Department=AS Near Eastern Studies");
+});
