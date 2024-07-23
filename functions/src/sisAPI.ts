@@ -9,14 +9,17 @@ export type School = {
     Name: string
 }
 
-export const isSearchContext = (query: any): query is CourseQuery => {
-  const isArrayOfString = (arr: any): arr is Array<string> => (
+export const isSearchContext = (query: object): query is CourseQuery => {
+  const isArrayOfString = (arr: unknown): arr is Array<string> => (
     Array.isArray(arr) && arr.every((el) => typeof el === "string")
   );
 
-  return isArrayOfString(query.terms) &&
-    isArrayOfString(query.schools) &&
-   isArrayOfString(query.departments);
+  return "terms" in query &&
+        isArrayOfString(query.terms) &&
+        "schools" in query &&
+        isArrayOfString(query.schools) &&
+        "departments" in query &&
+        isArrayOfString(query.departments);
 };
 
 export const requestSchools = () =>
