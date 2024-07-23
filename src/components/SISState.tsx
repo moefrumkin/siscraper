@@ -63,7 +63,7 @@ type Course = {
 
 type ColumnMeta = {
     name: keyof Course,
-    readableName: string
+    readableName: string,
 }
 
 const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
@@ -221,6 +221,22 @@ const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
     }
 }
 
+const DefaultColumns: ColumnMeta[] = [
+    CourseHeader.SchoolName,
+    CourseHeader.Term,
+    CourseHeader.OfferingName,
+    CourseHeader.SectionName,
+    CourseHeader.Title,
+    CourseHeader.Credits,
+    CourseHeader.Department,
+    CourseHeader.Level,
+    CourseHeader.Status,
+    CourseHeader.SeatsAvailable,
+    CourseHeader.MaxSeats,
+    CourseHeader.OpenSeats,
+    CourseHeader.Waitlisted
+]
+
 const CourseKeys: (keyof Course)[] = Object.values(CourseHeader).map(data => data.name)
 
 const SISState = () => {
@@ -234,7 +250,7 @@ const SISState = () => {
 
     const [courses, setCourses] = useState<Array<Course>>([])
 
-    const [headers, setHeaders] = useState<Array<keyof Course>>(CourseKeys)
+    const [headers, setHeaders] = useState<ColumnMeta[]>(DefaultColumns)
 
     const [error, setError] = useState<Error | null>(null)
 
@@ -314,10 +330,12 @@ const SISState = () => {
                     />
                     <button onClick={searchCourses}>Search Courses</button>
                     <button onClick={() => {setCourses([]); setError(null)}}>Clear</button>
-                    <CheckboxMenu<{value: ColumnMeta, label: string}, GroupBase<{value: ColumnMeta, label: string}>>
+                    <Select<{value: ColumnMeta, label: string}, true, GroupBase<{value: ColumnMeta, label: string}>>
+                        isMulti
                         styles={menuStyle}
                         options={Object.values(CourseHeader).map(header => ({value: header, label: header.readableName}))}
-                        name={"test"}
+                        defaultValue={DefaultColumns.map(column => ({value: column, label: column.readableName}))}
+                        onChange={selection => setHeaders(selection.map(column => column.value))}
                     />
                     {courses.length > 0 && <div className='ag-theme-quartz' style={{ height: "50em", width: "100em" }}>
                         <AgGridReact<Course>
@@ -325,35 +343,12 @@ const SISState = () => {
                             paginationPageSize={500}
                             paginationPageSizeSelector={[200, 500, 2000]}
                             rowData={courses}
-                            columnDefs={headers.map(key => ({ headerName: CourseHeader[key].readableName, field: key }))} />
+                            columnDefs={headers.map(key => ({ headerName: key.readableName, field: key.name }))} />
                     </div>}
                 </div>}
         </div>
     )
 }
-
-type CheckboxMenuOptions<Option = unknown, Group extends GroupBase<Option> = GroupBase<Option>> = Props<Option, true, Group> & {
-    name: string
-    onChange?: any
-}
-
-const CheckboxMenu = <Option, Group extends GroupBase<Option>>(props: CheckboxMenuOptions<Option, Group>) =>  {
-    const [selection, setSelection] = useState<Option[]>([]);
-
-    const Option = ({children, ...props}: OptionProps<Option, true, Group>) => {
-            // NOTE: we could also see if an item is in the selection, but that would be linear for each item
-            const [checked, setChecked] = useState<Boolean>(false);
-            return <components.Option 
-            {...props}
-            >
-                {children}
-                <input value = "test" type="checkbox"
-            /></components.Option>
-    }
-    return <Select<Option, true, Group> onChange={setSelection} isMulti {...props} components={{Option}}/>
-}
-
-
 
 const APIError = (props: { error: Error }) => (
     <div>
