@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { firebaseFunctions } from '../firebase'
-import { httpsCallable } from 'firebase/functions';
+import { getDepartments, getSchools, getTerms, searchCourses } from '../firebase'
 import Select, { CSSObjectWithLabel, GroupBase } from 'react-select'
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css"
-import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, SearchQuery, Labeled } from '../lib/datatypes';
+import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, Labeled } from '../lib/datatypes';
 
 const SISState = () => {
     const [loading, setLoading] = useState<boolean>(true)
@@ -23,11 +22,11 @@ const SISState = () => {
     const [error, setError] = useState<Error | null>(null)
 
     useEffect(() => {
-        const promisedSchools = httpsCallable<void, Array<School>>(firebaseFunctions, "getSchools")()
+        const promisedSchools = getSchools()
             .then(result => {
                 const schools = result.data
 
-                const getDepartments = httpsCallable<{school: string}, Array<Department>>(firebaseFunctions, "getDepartments")
+               
                 return Promise.all(schools.map(school =>
                     getDepartments({ school: school.Name }).then(departments => {
                         return {
@@ -39,7 +38,7 @@ const SISState = () => {
             })
             .then(setSchools)
 
-        const promisedTerms = httpsCallable<void, Array<Term>>(firebaseFunctions, "getTerms")()
+        const promisedTerms = getTerms()
             .then(result => setTerms(result.data))
 
         Promise.all([promisedSchools, promisedTerms])
@@ -47,14 +46,16 @@ const SISState = () => {
             .finally(() => setLoading(false))
     }, [])
 
-    const searchCourses = () => {
-        httpsCallable<SearchQuery, Array<Course>>(firebaseFunctions, "searchCourses")({
+    const getCourses = () => {
+        setLoading(true)
+        searchCourses({
             terms: selectedTerms.map(term => term.Name),
             schools: selectedSchools.map(school => school.Name),
             departments: selectedDepartments
         })
             .then(result => setCourses(result.data))
             .catch(setError)
+            .finally(() => setLoading(false))
     }
 
     const menuStyle = {
@@ -97,7 +98,7 @@ const SISState = () => {
                         options={terms.map(term => ({ value: term, label: term.Name }))}
                         onChange={selection => setSelectedTerms(selection.map(selection => selection.value))}
                     />
-                    <button onClick={searchCourses}>Search Courses</button>
+                    <button onClick={getCourses}>Search Courses</button>
                     <button onClick={() => {setCourses([]); setError(null)}}>Clear</button>
                     <Select<Labeled<ColumnMeta>, true, GroupBase<Labeled<ColumnMeta>>>
                         isMulti

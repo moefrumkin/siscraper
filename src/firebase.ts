@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
+import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/functions";
+import { Course, Department, School, SearchQuery, Term } from "./lib/datatypes";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -14,6 +15,11 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebase = initializeApp(firebaseConfig);
 export const firebaseFunctions = getFunctions(firebase);
+
+export const getSchools = httpsCallable<void, Array<School>>(firebaseFunctions, "getSchools")
+export const getDepartments = httpsCallable<{school: string}, Array<Department>>(firebaseFunctions, "getDepartments")
+export const getTerms = httpsCallable<void, Array<Term>>(firebaseFunctions, "getTerms")
+export const searchCourses = httpsCallable<SearchQuery, Array<Course>>(firebaseFunctions, "searchCourses")
 
 if (process.env.NODE_ENV !== "production") {
     connectFunctionsEmulator(firebaseFunctions, "localhost", 5001);
