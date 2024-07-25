@@ -5,7 +5,7 @@ import {CourseQuery} from ".";
 const APIKey = defineString("SIS_API_KEY");
 const APIBase = "https://sis.jhu.edu/api/classes";
 
-export type School = {
+export type School ={
     Name: string
 }
 
