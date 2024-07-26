@@ -3,6 +3,7 @@ import { Filter } from "../lib/datatypes";
 import { useCallback, useState } from "react";
 
 export const ColumnFilter = <T,>({filters, filterProps}: {filters: Filter<T>[], filterProps: CustomFilterProps<T, unknown, Set<Filter<T>>>}) => {
+    //TODO: we should be able to eliminate this by storing thins on ly in model
     const [activeFilters, setActiveFilters] = useState<Set<Filter<T>>>(new Set())
 
     const {onModelChange, model} = filterProps;
@@ -17,17 +18,13 @@ export const ColumnFilter = <T,>({filters, filterProps}: {filters: Filter<T>[], 
         setActiveFilters(activeFilters)
 
         onModelChange(activeFilters)
-        console.log("updating model")
     }
 
-    const doesFilterPass = useCallback(({data, node}: {data: T, node: unknown}) => {
-        if(model == null) {
-            return true;
-        }
-        else{
-            return    Array.from(model).every(filter => {console.log(data); return filter.predicate(data)})
-        }
-    }, [model])
+    const doesFilterPass = useCallback(({data}: {data: T, node: unknown}) => (
+        model == null ||
+            model.size == 0 ||
+            Array.from(model).some(filter => {console.log(data); return filter.predicate(data)})
+    ), [model])
 
     useGridFilter({doesFilterPass})
 

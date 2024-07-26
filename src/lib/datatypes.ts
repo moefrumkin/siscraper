@@ -126,6 +126,10 @@ export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
             {
                 name: "Is Graduate",
                 predicate: (course) => course.Level == "Graduate"
+            },
+            {
+                name: "Lower Level Undergraduate",
+                predicate: (course) => course.Level == "Lower Level Undergraduate"
             }
         ]
     },
