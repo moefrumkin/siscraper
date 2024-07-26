@@ -65,9 +65,17 @@ export type Labeled<T> =  {
     label: string
 }
 
+export type Predicate<T> = (instance: T) => boolean
+
+export type Filter<T> = {
+    predicate: Predicate<T>,
+    name: string
+}
+
 export type ColumnMeta = {
     name: keyof Course,
     readableName: string,
+    filters?: Filter<Course>[]
 }
 
 export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
@@ -113,7 +121,13 @@ export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
     },
     Level: {
         name: "Level",
-        readableName: "Level"
+        readableName: "Level",
+        filters: [
+            {
+                name: "Is Graduate",
+                predicate: (course) => course.Level == "Graduate"
+            }
+        ]
     },
     Status: {
         name: "Status",
