@@ -24,12 +24,8 @@ const SISState = () => {
 
     const [error, setError] = useState<Error | null>(null)
 
-    const clearLoadingAndError = () => {
-        setLoading(false)
-        setError(null)
-    }
-
     useEffect(() => {
+        setError(false)
         const promisedSchools = getSchools()
             .then(result => {
                 const schools = result.data
@@ -51,10 +47,11 @@ const SISState = () => {
 
         Promise.all([promisedSchools, promisedTerms])
             .catch(setError)
-            .finally(clearLoadingAndError)
+            .finally(() => setLoading(false))
     }, [])
 
     const getCourses = () => {
+        setError(null)
         setLoading(true)
         searchCourses({
             terms: selectedTerms.map(term => term.Name),
@@ -63,7 +60,7 @@ const SISState = () => {
         })
             .then(result => setCourses(result.data))
             .catch(setError)
-            .finally(clearLoadingAndError)
+            .finally(() => setLoading(false))
     }
 
     const menuStyle = {
