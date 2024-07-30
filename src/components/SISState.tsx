@@ -25,7 +25,7 @@ const SISState = () => {
     const [error, setError] = useState<Error | null>(null)
 
     useEffect(() => {
-        setError(false)
+        setError(null)
         const promisedSchools = getSchools()
             .then(result => {
                 const schools = result.data
