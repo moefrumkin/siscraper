@@ -7,6 +7,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css"
 import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, Labeled, Filter } from '../lib/datatypes';
 import { ColumnFilter } from './ColumnFilter';
 import { CustomFilterProps } from 'ag-grid-react';
+import { Loading } from './Loading';
 
 const SISState = () => {
     const [loading, setLoading] = useState<boolean>(true)
@@ -22,6 +23,11 @@ const SISState = () => {
     const [headers, setHeaders] = useState<ColumnMeta[]>(DefaultColumns)
 
     const [error, setError] = useState<Error | null>(null)
+
+    const clearLoadingAndError = () => {
+        setLoading(false)
+        setError(null)
+    }
 
     useEffect(() => {
         const promisedSchools = getSchools()
@@ -45,7 +51,7 @@ const SISState = () => {
 
         Promise.all([promisedSchools, promisedTerms])
             .catch(setError)
-            .finally(() => setLoading(false))
+            .finally(clearLoadingAndError)
     }, [])
 
     const getCourses = () => {
@@ -57,7 +63,7 @@ const SISState = () => {
         })
             .then(result => setCourses(result.data))
             .catch(setError)
-            .finally(() => setLoading(false))
+            .finally(clearLoadingAndError)
     }
 
     const menuStyle = {
@@ -70,7 +76,7 @@ const SISState = () => {
     return (
         <div>
             {error && <APIError error={error} />}
-            {loading ? <p>Loading</p> :
+            {loading ? <Loading/> :
                 <div>
                     <Select isMulti
                         styles={menuStyle}
