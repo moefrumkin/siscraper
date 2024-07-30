@@ -7,6 +7,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css"
 import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, Labeled, Filter } from '../lib/datatypes';
 import { ColumnFilter } from './ColumnFilter';
 import { CustomFilterProps } from 'ag-grid-react';
+import { Loading } from './Loading';
 
 const SISState = () => {
     const [loading, setLoading] = useState<boolean>(true)
@@ -24,6 +25,7 @@ const SISState = () => {
     const [error, setError] = useState<Error | null>(null)
 
     useEffect(() => {
+        setError(null)
         const promisedSchools = getSchools()
             .then(result => {
                 const schools = result.data
@@ -49,6 +51,7 @@ const SISState = () => {
     }, [])
 
     const getCourses = () => {
+        setError(null)
         setLoading(true)
         searchCourses({
             terms: selectedTerms.map(term => term.Name),
@@ -70,7 +73,7 @@ const SISState = () => {
     return (
         <div>
             {error && <APIError error={error} />}
-            {loading ? <p>Loading</p> :
+            {loading ? <Loading/> :
                 <div>
                     <Select isMulti
                         styles={menuStyle}
