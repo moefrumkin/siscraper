@@ -8,7 +8,7 @@ import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHea
 import { ColumnFilter } from './ColumnFilter';
 import { CustomFilterProps } from 'ag-grid-react';
 import { Loading } from './Loading';
-import { Box, Modal, Typography } from '@mui/material';
+import { Box, Modal } from '@mui/material';
 import { CourseDisplay } from './CourseDisplay';
 
 const SISState = () => {
@@ -143,7 +143,7 @@ const SISState = () => {
                     aria-describedby="modal-modal-description"
                     >
                     <Box sx={modalStyle}>
-                    {selectedCourse !== null && <CourseDisplay course={selectedCourse}/>}
+                    {selectedCourse !== null && <CourseDisplay course={selectedCourse} sections={courses.filter(other => other.OfferingName == selectedCourse.OfferingName)} onSectionClicked={setSelectedCourse}/>}
                     </Box>
                     </Modal>
         </div>
@@ -155,7 +155,7 @@ const modalStyle = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: '50%',
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
