@@ -72,6 +72,13 @@ export type Filter<T> = {
     name: string
 }
 
+const equals = <T>(value: T, field: keyof Course) => (course: Course) => course[field] === value
+
+const equalsString = (value: string, field: keyof Course) => ({
+    predicate: equals(value, field),
+    name: value
+})
+
 export type ColumnMeta = {
     name: keyof Course,
     readableName: string,
@@ -123,14 +130,9 @@ export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
         name: "Level",
         readableName: "Level",
         filters: [
-            {
-                name: "Is Graduate",
-                predicate: (course) => course.Level == "Graduate"
-            },
-            {
-                name: "Lower Level Undergraduate",
-                predicate: (course) => course.Level == "Lower Level Undergraduate"
-            }
+            equalsString("Lower Level Undergraduate", "Level"),
+            equalsString("Upper Level Undergraduate", "Level"),
+            equalsString("Graduate", "Level"),
         ]
     },
     Status: {
