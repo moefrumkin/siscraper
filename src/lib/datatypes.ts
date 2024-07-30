@@ -137,7 +137,15 @@ export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
     },
     Status: {
         name: "Status",
-        readableName: "Status"
+        readableName: "Status",
+        filters: [
+            equalsString("Open", "Status"),
+            equalsString("Closed", "Status"),
+            equalsString("Canceled", "Status"),
+            equalsString("Waitlist Only", "Status"),
+            equalsString("Reserved Open", "Status"),
+            equalsString("Approval Required", "Status")
+        ]
     },
     DOW: {
         name: "DOW",
