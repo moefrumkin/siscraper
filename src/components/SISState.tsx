@@ -4,7 +4,9 @@ import Select, { CSSObjectWithLabel, GroupBase } from 'react-select'
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css"
-import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, Labeled } from '../lib/datatypes';
+import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, Labeled, Filter } from '../lib/datatypes';
+import { ColumnFilter } from './ColumnFilter';
+import { CustomFilterProps } from 'ag-grid-react';
 
 const SISState = () => {
     const [loading, setLoading] = useState<boolean>(true)
@@ -113,12 +115,21 @@ const SISState = () => {
                             paginationPageSize={500}
                             paginationPageSizeSelector={[200, 500, 2000]}
                             rowData={courses}
-                            columnDefs={headers.map(key => ({ headerName: key.readableName, field: key.name }))} />
+                            columnDefs={headers.map(key => ({
+                                 headerName: key.readableName,
+                                 field: key.name,
+                                 filter: makeFilter<Course>(key.filters)
+                                 }))} />
                     </div>}
                 </div>}
         </div>
     )
 }
+
+const makeFilter = <T,>(filters: Filter<T>[] | undefined) => (
+    filters === undefined? null:
+    ((filterProps: CustomFilterProps<T>) => <ColumnFilter<T> filters={filters} filterProps = {filterProps}/>)
+)
 
 const APIError = (props: { error: Error }) => (
     <div>

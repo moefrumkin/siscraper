@@ -65,9 +65,24 @@ export type Labeled<T> =  {
     label: string
 }
 
+export type Predicate<T> = (instance: T) => boolean
+
+export type Filter<T> = {
+    predicate: Predicate<T>,
+    name: string
+}
+
+const equals = <T>(value: T, field: keyof Course) => (course: Course) => course[field] === value
+
+const equalsString = (value: string, field: keyof Course) => ({
+    predicate: equals(value, field),
+    name: value
+})
+
 export type ColumnMeta = {
     name: keyof Course,
     readableName: string,
+    filters?: Filter<Course>[]
 }
 
 export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
@@ -113,11 +128,24 @@ export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
     },
     Level: {
         name: "Level",
-        readableName: "Level"
+        readableName: "Level",
+        filters: [
+            equalsString("Lower Level Undergraduate", "Level"),
+            equalsString("Upper Level Undergraduate", "Level"),
+            equalsString("Graduate", "Level"),
+        ]
     },
     Status: {
         name: "Status",
-        readableName: "Status"
+        readableName: "Status",
+        filters: [
+            equalsString("Open", "Status"),
+            equalsString("Closed", "Status"),
+            equalsString("Canceled", "Status"),
+            equalsString("Waitlist Only", "Status"),
+            equalsString("Reserved Open", "Status"),
+            equalsString("Approval Required", "Status")
+        ]
     },
     DOW: {
         name: "DOW",
