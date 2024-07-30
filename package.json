@@ -11,6 +11,10 @@
   },
   "dependencies": {
     "@ag-grid-community/react": "32.0.1",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^5.16.6",
+    "@mui/x-charts": "^7.11.1",
     "ag-grid-react": "32.0.1",
     "axios": "^1.7.2",
     "effect": "^3.4.8",

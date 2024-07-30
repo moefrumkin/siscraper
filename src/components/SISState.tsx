@@ -8,6 +8,8 @@ import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHea
 import { ColumnFilter } from './ColumnFilter';
 import { CustomFilterProps } from 'ag-grid-react';
 import { Loading } from './Loading';
+import { Box, Modal } from '@mui/material';
+import { CourseDisplay } from './CourseDisplay';
 
 const SISState = () => {
     const [loading, setLoading] = useState<boolean>(true)
@@ -21,6 +23,8 @@ const SISState = () => {
     const [courses, setCourses] = useState<Array<Course>>([])
 
     const [headers, setHeaders] = useState<ColumnMeta[]>(DefaultColumns)
+
+    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
 
     const [error, setError] = useState<Error | null>(null)
 
@@ -121,17 +125,43 @@ const SISState = () => {
                             pagination={true}
                             paginationPageSize={500}
                             paginationPageSizeSelector={[200, 500, 2000]}
+                            suppressCellFocus
                             rowData={courses}
                             columnDefs={headers.map(key => ({
                                  headerName: key.readableName,
                                  field: key.name,
                                  filter: makeFilter<Course>(key.filters)
-                                 }))} />
+                                 }))}
+                                 onRowClicked={row => setSelectedCourse(row.data || null)}
+                                 />
                     </div>}
                 </div>}
+                <Modal
+                    open={selectedCourse != null}
+                    onClose={() => setSelectedCourse(null)}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                    >
+                    <Box sx={modalStyle}>
+                    {selectedCourse !== null && <CourseDisplay course={selectedCourse} sections={courses.filter(other => other.OfferingName == selectedCourse.OfferingName)} onSectionClicked={setSelectedCourse}/>}
+                    </Box>
+                    </Modal>
         </div>
     )
 }
+
+const modalStyle = {
+    position: 'absolute' as const,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '50%',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+    color: "black"
+  };
 
 const makeFilter = <T,>(filters: Filter<T>[] | undefined) => (
     filters === undefined? null:
