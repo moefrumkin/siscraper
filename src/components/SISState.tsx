@@ -79,6 +79,7 @@ const SISState = () => {
                         styles={menuStyle}
                         options={schools.map(school => ({ value: school, label: school.Name }))}
                         onChange={selection => setSelectedSchools(selection.map(selection => selection.value))}
+                        value={selectedSchools.map(school => ({value: school, label: school.Name}))}
                     />
                     <Select<Labeled<Department>, true, Labeled<School> & { readonly options: readonly Labeled<Department>[] }> 
                         isMulti
@@ -97,11 +98,14 @@ const SISState = () => {
                                 <span>{school.label}</span>
                             </div>
                         )}
+                        value={selectedDepartments.map(department => ({value: department, label: department.DepartmentName}))}
                     />
                     <Select isMulti
                         styles={menuStyle}
                         options={terms.map(term => ({ value: term, label: term.Name }))}
                         onChange={selection => setSelectedTerms(selection.map(selection => selection.value))}
+                        value={selectedTerms.map(term => ({value: term, label: term.Name}))}
+
                     />
                     <button onClick={getCourses}>Search Courses</button>
                     <button onClick={() => {setCourses([]); setError(null)}}>Clear</button>
