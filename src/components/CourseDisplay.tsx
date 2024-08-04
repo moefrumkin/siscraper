@@ -7,7 +7,7 @@ import { Loading } from "./Loading";
 import { APIError } from "./APIError";
 
 export const CourseDisplay = ({course, sections, onSectionClicked = () => {}}: {course: Course, sections: Course[], onSectionClicked?: ((course: Course) => unknown)}) => {
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(true)
 
     const [detailedCourse, setDetailedCourse] = useState<Course | null>()
 
