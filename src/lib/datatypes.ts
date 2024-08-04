@@ -246,10 +246,6 @@ export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
         name: "SectionCoReqNotes",
         readableName: "Section Corequisite Notes"
     },
-    SSS_SectionsID: {
-        name: "SSS_SectionsID",
-        readableName: "SSS_SectinsID"
-    },
     Term_JSS: {
         name: "Term_JSS",
         readableName: "Term JSS"
@@ -258,8 +254,8 @@ export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
         name: "Repeatable",
         readableName: "Repeatable"
     },
-    SectionDetail: {
-        name: "SectionDetail",
+    SectionDetails: {
+        name: "SectionDetails",
         readableName: "Section Detail"
     }
 }
