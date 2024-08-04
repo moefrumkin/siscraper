@@ -6,23 +6,25 @@ import { getCourseDetails } from "../firebase";
 import { Loading } from "./Loading";
 import { APIError } from "./APIError";
 
-export const CourseDisplay = ({course, sections, onSectionClicked = () => {}}: {course: Course, sections: Course[], onSectionClicked?: ((course: Course) => unknown)}) => {
+export const CourseDisplay = ({courseNumber, courseSection, term, onSectionClicked = () => {}}: {courseNumber: string, courseSection: string, term: string, onSectionClicked?: ((course: Course) => unknown)}) => {
     const [loading, setLoading] = useState<boolean>(true)
 
-    const [detailedCourse, setDetailedCourse] = useState<Course | null>()
+    const [course, setCourse] = useState<Course | null>()
 
-    const sectionDetails = useMemo(() => detailedCourse?.SectionDetails[0], [detailedCourse])
+    const [sections, setSections] = useState<Course[]>([])
+
+    const sectionDetails = useMemo(() => course?.SectionDetails[0], [courseNumber, courseSection])
 
     const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
         setLoading(true)
         setError(null)
-        getCourseDetails({courseNumber: course.OfferingName, sectionNumber: course.SectionName, term: course.Term})
-        .then((result) => setDetailedCourse(result.data[0]))
+        getCourseDetails({courseNumber: courseNumber, sectionNumber: courseSection, term: term})
+        .then((result) => setCourse(result.data[0]))
         .catch(setError)
         .finally(() => setLoading(false))
-    }, [course])
+    }, [courseNumber, courseSection, term])
 
     return (
     <Box>
@@ -30,6 +32,8 @@ export const CourseDisplay = ({course, sections, onSectionClicked = () => {}}: {
         <Loading/>:
         <>
         {error && <APIError error={error}/>}
+        {course &&
+        <>
         <Typography component="h1">{course.Title} ({course.OfferingName})</Typography>
         <Typography component="h1">Section: {course.SectionName} out of {sections.length}</Typography>
         <Typography component="h2">{course.Department}</Typography>
@@ -56,7 +60,7 @@ export const CourseDisplay = ({course, sections, onSectionClicked = () => {}}: {
                 ))}
             </ImageList>
         </Box>
-        </>}
+        </>}</>}
     </Box>)
 }
 
