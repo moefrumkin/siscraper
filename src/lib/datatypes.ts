@@ -40,7 +40,7 @@ export type Course = {
     SectionName: string,
     SectionRegRestrictions: string,
     Status: string,
-    SectionDetails: SectionDetails,
+    SectionDetails: SectionDetails[],
     SubDepartment: string,
     Term: string,
     Term_IDR: string,
@@ -52,15 +52,15 @@ export type Course = {
 }
 
 export type SectionDetails = {
-    CoRequisites: unknown,
+    CoRequisites: string[],
     Credits: string,
-    CreditType: unknown,
+    CreditType: string,
     Departments: string,
     DepartmentID: string,
     Description: string,
-    EvaluationUrls: string,
-    Fees: string,
-    Meetings: unknown,
+    EvaluationUrls: string[],
+    Fees: string[],
+    Meetings: Meeting[],
     PosTags: unknown,
     Prerequisites: unknown,
     WebNotes: string,
@@ -68,10 +68,31 @@ export type SectionDetails = {
     Equivalencies: unknown
 }
 
+export type Meeting = {
+    Building: string,
+    DOW: string,
+    Dates: string,
+    Location: string,
+    Room: string,
+    Times: string
+}
+
+export type Prerequisite = {
+    Description: string,
+    Expression: string,
+    IsNegative: string
+}
+
 export type SearchQuery = {
     terms: string[],
     schools: string[],
     departments: Department[]
+}
+
+export type CourseDetailsQuery = {
+    courseNumber: string,
+    sectionNumber: string,
+    term: string
 }
 
 // A utility type for the react-select Select component

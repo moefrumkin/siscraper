@@ -10,6 +10,7 @@ import { CustomFilterProps } from 'ag-grid-react';
 import { Loading } from './Loading';
 import { Box, Modal } from '@mui/material';
 import { CourseDisplay } from './CourseDisplay';
+import { APIError } from './APIError';
 
 const SISState = () => {
     const [loading, setLoading] = useState<boolean>(true)
@@ -168,12 +169,6 @@ const makeFilter = <T,>(filters: Filter<T>[] | undefined) => (
     ((filterProps: CustomFilterProps<T>) => <ColumnFilter<T> filters={filters} filterProps = {filterProps}/>)
 )
 
-const APIError = (props: { error: Error }) => (
-    <div>
-        <h2>An error occured:</h2>
-        <p>{props.error.name}: {props.error.message}</p>
-        <p>{props.error.stack}</p>
-    </div>
-)
+
 
 export default SISState
