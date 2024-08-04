@@ -8,6 +8,7 @@ export const CourseDisplay = ({course, sections, onSectionClicked = () => {}}: {
         <Typography component="h1">Section: {course.SectionName} out of {sections.length}</Typography>
         <Typography component="h2">{course.Department}</Typography>
         <Typography component="h2">{course.Instructors}</Typography>
+        <Typography component="h2">Prerequisites: {course.Prerequisite}</Typography>
         <Box>
             <Typography>Course Demand</Typography>
             <ImageList cols={1} sx={{gridAutoFlow: "column"}}>
