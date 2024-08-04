@@ -2,7 +2,7 @@ import { Box, Card, CardActionArea, CardContent, ImageList, ImageListItem, Typog
 import { Course } from "../lib/datatypes";
 import { PieChart } from "@mui/x-charts";
 import { useEffect, useMemo, useState } from "react";
-import { getCourseDetails } from "../firebase";
+import { getCourseDetails, getCourseSections } from "../firebase";
 import { Loading } from "./Loading";
 import { APIError } from "./APIError";
 
@@ -13,7 +13,7 @@ export const CourseDisplay = ({courseNumber, courseSection, term, onSectionClick
 
     const [sections, setSections] = useState<Course[]>([])
 
-    const sectionDetails = useMemo(() => course?.SectionDetails[0], [courseNumber, courseSection])
+    const sectionDetails = useMemo(() => course?.SectionDetails[0], [course?.SectionDetails])
 
     const [error, setError] = useState<Error | null>(null);
 
@@ -24,6 +24,12 @@ export const CourseDisplay = ({courseNumber, courseSection, term, onSectionClick
         .then((result) => setCourse(result.data[0]))
         .catch(setError)
         .finally(() => setLoading(false))
+    }, [courseNumber, courseSection, term])
+
+    useEffect(() => {
+        getCourseSections({courseNumber: courseNumber, sectionNumber: courseSection, term: term})
+        .then((result) => {setSections(result.data); console.log(result);})
+        .catch(setError)
     }, [courseNumber, courseSection, term])
 
     return (

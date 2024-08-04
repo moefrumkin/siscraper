@@ -21,6 +21,7 @@ export const getDepartments = httpsCallable<{school: string}, Array<Department>>
 export const getTerms = httpsCallable<void, Array<Term>>(firebaseFunctions, "getTerms")
 export const searchCourses = httpsCallable<SearchQuery, Array<Course>>(firebaseFunctions, "searchCourses")
 export const getCourseDetails = httpsCallable<CourseDetailsQuery, Course[]>(firebaseFunctions, "getCourseDetails")
+export const getCourseSections = httpsCallable<CourseDetailsQuery, Course[]>(firebaseFunctions, "getCourseSections")
 
 if (process.env.NODE_ENV !== "production") {
     connectFunctionsEmulator(firebaseFunctions, "localhost", 5001);

@@ -12,6 +12,7 @@ import * as logger from "firebase-functions/logger";
 import {
   queryCourses,
   requestCourseDetails,
+  requestCourseSections,
   requestDepartments,
   requestSchools,
   requestTerms,
@@ -113,6 +114,27 @@ export const getCourseDetails = onCall((context) => {
   }
 
   const details = requestCourseDetails(query)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      logger.error(error);
+      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
+    });
+
+  return details;
+});
+
+
+export const getCourseSections = onCall((context) => {
+  const query = context.data;
+
+  if (!isCourseDetailsQuery(query)) {
+    logger.error(`Malformed search request: ${query}`);
+    throw new HttpsError("invalid-argument", "Malformed Search Request");
+  }
+
+  const details = requestCourseSections(query)
     .then((result) => {
       return result;
     })
