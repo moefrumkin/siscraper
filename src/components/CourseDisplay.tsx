@@ -6,7 +6,7 @@ import { getCourseDetails, getCourseSections } from "../firebase";
 import { Loading } from "./Loading";
 import { APIError } from "./APIError";
 
-export const CourseDisplay = ({courseNumber, courseSection, term, onSectionClicked = () => {}}: {courseNumber: string, courseSection: string, term: string, onSectionClicked?: ((course: Course) => unknown)}) => {
+export const CourseDisplay = ({courseNumber, courseSection, term}: {courseNumber: string, courseSection: string, term: string, onSectionClicked?: ((course: Course) => unknown)}) => {
     const [loading, setLoading] = useState<boolean>(true)
 
     const [course, setCourse] = useState<Course | null>()
@@ -17,14 +17,16 @@ export const CourseDisplay = ({courseNumber, courseSection, term, onSectionClick
 
     const [error, setError] = useState<Error | null>(null);
 
+    const [selectedCourseSection, setSelectedCourseSection] = useState<string>(courseSection);
+
     useEffect(() => {
         setLoading(true)
         setError(null)
-        getCourseDetails({courseNumber: courseNumber, sectionNumber: courseSection, term: term})
+        getCourseDetails({courseNumber: courseNumber, sectionNumber: selectedCourseSection, term: term})
         .then((result) => setCourse(result.data[0]))
         .catch(setError)
         .finally(() => setLoading(false))
-    }, [courseNumber, courseSection, term])
+    }, [courseNumber, selectedCourseSection, term])
 
     useEffect(() => {
         getCourseSections({courseNumber: courseNumber, sectionNumber: courseSection, term: term})
@@ -55,7 +57,7 @@ export const CourseDisplay = ({courseNumber, courseSection, term, onSectionClick
                 {sections.map(section => (
                     <ImageListItem>
                     <Card>
-                        <CardActionArea onClick={() => onSectionClicked(section)}>
+                        <CardActionArea onClick={() => setSelectedCourseSection(section.SectionName)}>
                             <CardContent>
                                 <SectionDemand course={section}/>
                                 <Typography>{section.SectionName}</Typography>

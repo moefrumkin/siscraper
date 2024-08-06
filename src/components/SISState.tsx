@@ -144,7 +144,7 @@ const SISState = () => {
                     aria-describedby="modal-modal-description"
                     >
                     <Box sx={modalStyle}>
-                    {selectedCourse !== null && <CourseDisplay courseNumber={selectedCourse.OfferingName} courseSection={selectedCourse.SectionName} term={selectedCourse.Term} onSectionClicked={setSelectedCourse}/>}
+                    {selectedCourse !== null && <CourseDisplay courseNumber={selectedCourse.OfferingName} courseSection={selectedCourse.SectionName} term={selectedCourse.Term}/>}
                     </Box>
                     </Modal>
         </div>
