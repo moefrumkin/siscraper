@@ -1,12 +1,13 @@
 import { Box, Card, CardActionArea, CardContent, ImageList, ImageListItem, Typography } from "@mui/material";
-import { Course } from "../lib/datatypes";
+import { Course, Labeled, Term } from "../lib/datatypes";
 import { PieChart } from "@mui/x-charts";
 import { useEffect, useMemo, useState } from "react";
 import { getCourseDetails, getCourseSections } from "../firebase";
 import { Loading } from "./Loading";
 import { APIError } from "./APIError";
+import Select from "react-select";
 
-export const CourseDisplay = ({courseNumber, courseSection, term}: {courseNumber: string, courseSection: string, term: string, onSectionClicked?: ((course: Course) => unknown)}) => {
+export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {courseNumber: string, courseSection: string, term: Term, terms: Term[]}) => {
     const [loading, setLoading] = useState<boolean>(true)
 
     const [course, setCourse] = useState<Course | null>()
@@ -19,20 +20,22 @@ export const CourseDisplay = ({courseNumber, courseSection, term}: {courseNumber
 
     const [selectedCourseSection, setSelectedCourseSection] = useState<string>(courseSection);
 
+    const [selectedTerm, setSelectedTerm] = useState<Term>(term);
+
     useEffect(() => {
         setLoading(true)
         setError(null)
-        getCourseDetails({courseNumber: courseNumber, sectionNumber: selectedCourseSection, term: term})
+        getCourseDetails({courseNumber: courseNumber, sectionNumber: selectedCourseSection, term: selectedTerm.Name})
         .then((result) => setCourse(result.data[0]))
         .catch(setError)
         .finally(() => setLoading(false))
-    }, [courseNumber, selectedCourseSection, term])
+    }, [courseNumber, selectedCourseSection, selectedTerm])
 
     useEffect(() => {
-        getCourseSections({courseNumber: courseNumber, sectionNumber: courseSection, term: term})
+        getCourseSections({courseNumber: courseNumber, sectionNumber: courseSection, term: selectedTerm.Name})
         .then((result) => {setSections(result.data); console.log(result);})
         .catch(setError)
-    }, [courseNumber, courseSection, term])
+    }, [courseNumber, courseSection, selectedTerm])
 
     return (
     <Box>
@@ -46,13 +49,20 @@ export const CourseDisplay = ({courseNumber, courseSection, term}: {courseNumber
         <Typography component="h1">Section: {course.SectionName} out of {sections.length}</Typography>
         <Typography component="h2">{course.Department}</Typography>
         <Typography component="h2">{course.Instructors}</Typography>
+        <Typography component="h2">{course.Term}</Typography>
         {sectionDetails &&
         <>
         <Typography component="p">{sectionDetails.Description}</Typography>
         </>
         }
+        </>}
         <Box>
             <Typography>Course Demand</Typography>
+            <Select<Labeled<Term>>
+                defaultValue={{label: selectedTerm.Name, value: selectedTerm}}
+                options={terms.map(term => ({value: term, label: term.Name}))}
+                onChange={selection => selection && setSelectedTerm(selection.value)}
+                />
             <ImageList cols={1} sx={{gridAutoFlow: "column"}}>
                 {sections.map(section => (
                     <ImageListItem>
@@ -68,7 +78,7 @@ export const CourseDisplay = ({courseNumber, courseSection, term}: {courseNumber
                 ))}
             </ImageList>
         </Box>
-        </>}</>}
+        </>}
     </Box>)
 }
 
