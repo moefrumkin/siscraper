@@ -108,7 +108,7 @@ export const searchCourses = onCall((context) => {
 export const getCourseDetails = onCall((context) => {
   const query = context.data;
 
-  if (!isCourseDetailsQuery(query)) {
+  if (!isTermedCourseDetailsQuery(query)) {
     logger.error(`Malformed search request: ${query}`);
     throw new HttpsError("invalid-argument", "Malformed Search Request");
   }
@@ -179,15 +179,23 @@ export const isCourseQuery = (context: object): context is CourseQuery => {
 export type CourseDetailsQuery = {
   courseNumber: string,
   sectionNumber: string,
-  term: string
+  term?: string
 }
+
+export type TermedCourseDetailsQuery = CourseDetailsQuery &
+{term: string}
 
 export const isCourseDetailsQuery =
   (query: object): query is CourseDetailsQuery => (
     "courseNumber" in query &&
     typeof query.courseNumber === "string" &&
     "sectionNumber" in query &&
-    typeof query.sectionNumber === "string" &&
+    typeof query.sectionNumber === "string"
+  );
+
+export const isTermedCourseDetailsQuery =
+  (query: object): query is TermedCourseDetailsQuery => (
+    isCourseDetailsQuery(query) &&
     "term" in query &&
     typeof query.term === "string"
   );

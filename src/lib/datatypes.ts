@@ -92,7 +92,7 @@ export type SearchQuery = {
 export type CourseDetailsQuery = {
     courseNumber: string,
     sectionNumber: string,
-    term: string
+    term?: string
 }
 
 // A utility type for the react-select Select component

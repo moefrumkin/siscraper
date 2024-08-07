@@ -33,7 +33,7 @@ export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {cours
 
     useEffect(() => {
         getCourseSections({courseNumber: courseNumber, sectionNumber: courseSection, term: selectedTerm.Name})
-        .then((result) => {setSections(result.data); console.log(result);})
+        .then((result) => setSections(result.data))
         .catch(setError)
     }, [courseNumber, courseSection, selectedTerm])
 
