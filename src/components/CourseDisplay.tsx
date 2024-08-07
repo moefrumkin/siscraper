@@ -1,6 +1,6 @@
 import { Box, Card, CardActionArea, CardContent, ImageList, ImageListItem, Typography } from "@mui/material";
 import { Course, Labeled, Term } from "../lib/datatypes";
-import { PieChart } from "@mui/x-charts";
+import { BarChart, PieChart } from "@mui/x-charts";
 import { useEffect, useMemo, useState } from "react";
 import { getCourseDetails, getCourseSections } from "../firebase";
 import { Loading } from "./Loading";
@@ -48,7 +48,7 @@ export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {cours
         {course &&
         <>
         <Typography component="h1">{course.Title} ({course.OfferingName})</Typography>
-        <Typography component="h1">Section: {course.SectionName} out of {sections.length}</Typography>
+        <Typography component="h1">Section: {course.SectionName} out of {sectionsForSelectedTerm.length}</Typography>
         <Typography component="h2">{course.Department}</Typography>
         <Typography component="h2">{course.Instructors}</Typography>
         <Typography component="h2">{course.Term}</Typography>
@@ -79,6 +79,7 @@ export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {cours
                     </ImageListItem>
                 ))}
             </ImageList>
+            <CourseHistory sections={sections}/>
         </Box>
         </>}
     </Box>)
@@ -100,4 +101,19 @@ const SectionDemand = ({course}: {course: Course}) => {
     width={600}
     height={200}
     />
+}
+
+const CourseHistory = ({sections}: {sections: Course[]}) => {
+    const terms = useMemo(() => sections.map(course => course.Term), [sections])
+
+    //TODO: there must be a more efficient way to do this
+    const series = useMemo(() => [{data: terms.map(term => sections.filter(course => course.Term == term).map(course => parseInt(course.MaxSeats) - parseInt(course.OpenSeats)).reduce((prev, curr) => prev + curr))}], [terms, sections])
+
+    return (
+        <BarChart
+            series= {series}
+            xAxis={[{data: terms, scaleType: 'band'}]}
+            height={290}
+            />
+    )
 }
