@@ -22,6 +22,8 @@ export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {cours
 
     const [selectedTerm, setSelectedTerm] = useState<Term>(term);
 
+    const sectionsForSelectedTerm = useMemo(() => sections.filter(section => section.Term == selectedTerm.Name), [sections, selectedTerm])
+
     useEffect(() => {
         setLoading(true)
         setError(null)
@@ -32,10 +34,10 @@ export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {cours
     }, [courseNumber, selectedCourseSection, selectedTerm])
 
     useEffect(() => {
-        getCourseSections({courseNumber: courseNumber, sectionNumber: courseSection, term: selectedTerm.Name})
-        .then((result) => setSections(result.data))
+        getCourseSections({courseNumber: courseNumber, sectionNumber: courseSection})
+        .then((result) => {setSections(result.data); console.log(result); })
         .catch(setError)
-    }, [courseNumber, courseSection, selectedTerm])
+    }, [courseNumber, courseSection])
 
     return (
     <Box>
@@ -64,7 +66,7 @@ export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {cours
                 onChange={selection => selection && setSelectedTerm(selection.value)}
                 />
             <ImageList cols={1} sx={{gridAutoFlow: "column"}}>
-                {sections.map(section => (
+                {sectionsForSelectedTerm.map(section => (
                     <ImageListItem>
                     <Card>
                         <CardActionArea onClick={() => setSelectedCourseSection(section.SectionName)}>

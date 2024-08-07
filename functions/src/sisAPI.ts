@@ -60,11 +60,14 @@ export const requestCourseDetails =
     .then((response) => response.data);
 
 
-export const requestCourseSections = (query: CourseDetailsQuery) =>
-  axios
+export const requestCourseSections = (query: CourseDetailsQuery) => {
+  const termTerm = query.term? `/${encodeURI(query.term)}` : "";
+
+  return axios
     .get(`${APIBase}/${query.courseNumber.replace(/\./g, "")}` +
-        (query.term && `/${encodeURI(query.term)}`) +
+        termTerm +
         `?key=${APIKey.value()}`)
     .then((response) => response.data);
+};
 
 // TODO: add a data extraction function
