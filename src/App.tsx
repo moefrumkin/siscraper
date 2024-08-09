@@ -1,5 +1,5 @@
-import './App.css'
-import SISState from './components/SISState';
+import "./App.css"
+import SISState from "./components/SISState";
 
 const App = () => {
   return <SISState />
