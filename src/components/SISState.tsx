@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
 import { getDepartments, getSchools, getTerms, searchCourses } from "../firebase"
 import Select, { CSSObjectWithLabel, GroupBase } from "react-select"
-import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css"
-import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, Labeled, Filter } from "../lib/datatypes";
-import { ColumnFilter } from "./ColumnFilter";
-import { CustomFilterProps } from "ag-grid-react";
+import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, Labeled } from "../lib/datatypes";
 import { Loading } from "./Loading";
 import { Box, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { CourseDisplay } from "./CourseDisplay";
 import { APIError } from "./APIError";
+import { CourseTable } from "./CourseTable";
 
 const SISState = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -122,19 +120,7 @@ const SISState = () => {
             onChange={selection => setHeaders(selection.map(column => column.value))}
           />
           {courses.length > 0 && <div className='ag-theme-quartz' style={{ height: "50em", width: "100em" }}>
-            <AgGridReact<Course>
-              pagination={true}
-              paginationPageSize={500}
-              paginationPageSizeSelector={[200, 500, 2000]}
-              suppressCellFocus
-              rowData={courses}
-              columnDefs={headers.map(key => ({
-                headerName: key.readableName,
-                field: key.name,
-                filter: makeFilter<Course>(key.filters)
-              }))}
-              onRowClicked={row => setSelectedCourse(row.data || null)}
-            />
+            <CourseTable courses={courses} headers={headers} onCourseSelected={setSelectedCourse}/>
           </div>}
         </div>}
       <Dialog
@@ -170,10 +156,7 @@ const modalStyle = {
   color: "black"
 };
 
-const makeFilter = <T,>(filters: Filter<T>[] | undefined) => (
-  filters === undefined? null:
-    ((filterProps: CustomFilterProps<T>) => <ColumnFilter<T> filters={filters} filterProps = {filterProps}/>)
-)
+
 
 
 
