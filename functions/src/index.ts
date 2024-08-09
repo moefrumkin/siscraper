@@ -10,7 +10,12 @@
 import {HttpsError, onCall} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import {
-  queryCourses, requestDepartments, requestSchools, requestTerms,
+  queryCourses,
+  requestCourseDetails,
+  requestCourseSections,
+  requestDepartments,
+  requestSchools,
+  requestTerms,
 } from "./sisAPI";
 
 
@@ -100,6 +105,47 @@ export const searchCourses = onCall((context) => {
   }
 });
 
+export const getCourseDetails = onCall((context) => {
+  const query = context.data;
+
+  if (!isTermedCourseDetailsQuery(query)) {
+    logger.error(`Malformed search request: ${query}`);
+    throw new HttpsError("invalid-argument", "Malformed Search Request");
+  }
+
+  const details = requestCourseDetails(query)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      logger.error(error);
+      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
+    });
+
+  return details;
+});
+
+
+export const getCourseSections = onCall((context) => {
+  const query = context.data;
+
+  if (!isCourseDetailsQuery(query)) {
+    logger.error(`Malformed search request: ${query}`);
+    throw new HttpsError("invalid-argument", "Malformed Search Request");
+  }
+
+  const details = requestCourseSections(query)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      logger.error(error);
+      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
+    });
+
+  return details;
+});
+
 export type Department = {
     DepartmentName: string,
     SchoolName: string
@@ -129,3 +175,27 @@ export const isCourseQuery = (context: object): context is CourseQuery => {
   Array.isArray(context.departments) &&
   context.departments.every((dept: unknown) => isDepartment(dept));
 };
+
+export type CourseDetailsQuery = {
+  courseNumber: string,
+  sectionNumber: string,
+  term?: string
+}
+
+export type TermedCourseDetailsQuery = CourseDetailsQuery &
+{term: string}
+
+export const isCourseDetailsQuery =
+  (query: object): query is CourseDetailsQuery => (
+    "courseNumber" in query &&
+    typeof query.courseNumber === "string" &&
+    "sectionNumber" in query &&
+    typeof query.sectionNumber === "string"
+  );
+
+export const isTermedCourseDetailsQuery =
+  (query: object): query is TermedCourseDetailsQuery => (
+    isCourseDetailsQuery(query) &&
+    "term" in query &&
+    typeof query.term === "string"
+  );

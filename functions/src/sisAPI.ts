@@ -1,6 +1,6 @@
 import axios from "axios";
 import {defineString} from "firebase-functions/params";
-import {CourseQuery} from ".";
+import {CourseDetailsQuery, CourseQuery, TermedCourseDetailsQuery} from ".";
 
 const APIKey = defineString("SIS_API_KEY");
 const APIBase = "https://sis.jhu.edu/api/classes";
@@ -50,3 +50,24 @@ export const queryCourses = (query: CourseQuery) =>
     .get(`${APIBase}?${encodeURI(formatCourseQuery(query))}\
     &key=${APIKey.value()}`)
     .then((response) => response.data);
+
+export const requestCourseDetails =
+(query: TermedCourseDetailsQuery) =>
+  axios
+    .get(`${APIBase}/${query.courseNumber.replace(/\./g, "")}` +
+    `${query.sectionNumber}/` +
+    `${encodeURI(query.term)}?key=${APIKey.value()}`)
+    .then((response) => response.data);
+
+
+export const requestCourseSections = (query: CourseDetailsQuery) => {
+  const termTerm = query.term? `/${encodeURI(query.term)}` : "";
+
+  return axios
+    .get(`${APIBase}/${query.courseNumber.replace(/\./g, "")}` +
+        termTerm +
+        `?key=${APIKey.value()}`)
+    .then((response) => response.data);
+};
+
+// TODO: add a data extraction function

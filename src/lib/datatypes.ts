@@ -13,44 +13,74 @@ export type Term = {
 }
 
 export type Course = {
-    TermStartDate: string,
-    SchoolName: string,
+    AllDepartments: string,
+    Areas: string,
+    Building: string,
     CoursePrefix: string,
-    Term: string,
-    Term_IDR: string,
-    OfferingName: string,
-    SectionName: string,
-    Title: string,
     Credits: string,
     Department: string,
-    Level: string,
-    Status: string,
     DOW: string,
     DOWSort: string,
-    TimeofDay: string,
-    SubDepartment: string,
-    SectionRegRestriction: string,
-    Prerequisite: string,
-    SeatsAvailable: string,
-    MaxSeats: string,
-    OpenSeats: string,
-    Waitlisted: string,
-    IsWritingIntensive: string,
-    AllDepartments: string,
+    HasBio: string,
+    InstructionMethod: string,
     Instructors: string,
     InstructorsFullName: string,
+    IsWritingIntensive: string,
+    Level: string,
     Location: string,
-    Building: string,
-    HasBio: string,
+    MaxSeats: string,
     Meetings: string,
-    Areas: string,
-    InstructionMethod: string,
-    SectionCoRequisites: string,
-    SectionCoReqNotes: string,
-    SSS_SectionsID: string,
-    Term_JSS: string,
+    OfferingName: string,
+    OpenSeats: string,
     Repeatable: string,
-    SectionDetail: string
+    SchoolName: string,
+    SeatsAvailable: string,
+    SectionCoReqNotes: string,
+    SectionCoRequisites: string,
+    SectionName: string,
+    SectionRegRestrictions: string,
+    Status: string,
+    SectionDetails: SectionDetails[],
+    SubDepartment: string,
+    Term: string,
+    Term_IDR: string,
+    Term_JSS: string,
+    TermStartDate: string,
+    TimeOfDay: string,
+    Title: string,
+    Waitlisted: string,
+}
+
+export type SectionDetails = {
+    CoRequisites: string[],
+    Credits: string,
+    CreditType: string,
+    Departments: string,
+    DepartmentID: string,
+    Description: string,
+    EvaluationUrls: string[],
+    Fees: string[],
+    Meetings: Meeting[],
+    PosTags: unknown,
+    Prerequisites: unknown,
+    WebNotes: string,
+    Instructors: unknown,
+    Equivalencies: unknown
+}
+
+export type Meeting = {
+    Building: string,
+    DOW: string,
+    Dates: string,
+    Location: string,
+    Room: string,
+    Times: string
+}
+
+export type Prerequisite = {
+    Description: string,
+    Expression: string,
+    IsNegative: string
 }
 
 export type SearchQuery = {
@@ -58,6 +88,14 @@ export type SearchQuery = {
     schools: string[],
     departments: Department[]
 }
+
+export type CourseDetailsQuery = {
+    courseNumber: string,
+    sectionNumber: string,
+    term?: string
+}
+
+export type TermedCourseDetailsQuery = CourseDetailsQuery & {term: string}
 
 // A utility type for the react-select Select component
 export type Labeled<T> =  {
@@ -155,21 +193,17 @@ export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
         name: "DOWSort",
         readableName: "Days of Week for Sort"
     },
-    TimeofDay: {
-        name: "TimeofDay",
+    TimeOfDay: {
+        name: "TimeOfDay",
         readableName: "Does Instructor Have Bio"
     },
     SubDepartment: {
         name: "SubDepartment",
         readableName: "Subdepartment"
     },
-    SectionRegRestriction: {
-        name: "SectionRegRestriction",
+    SectionRegRestrictions: {
+        name: "SectionRegRestrictions",
         readableName: "Sections Registration Restriction"
-    },
-    Prerequisite: {
-        name: "Prerequisite",
-        readableName: "Prerequisites"
     },
     SeatsAvailable: {
         name: "SeatsAvailable",
@@ -235,10 +269,6 @@ export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
         name: "SectionCoReqNotes",
         readableName: "Section Corequisite Notes"
     },
-    SSS_SectionsID: {
-        name: "SSS_SectionsID",
-        readableName: "SSS_SectinsID"
-    },
     Term_JSS: {
         name: "Term_JSS",
         readableName: "Term JSS"
@@ -247,8 +277,8 @@ export const CourseHeader: { [key in (keyof Course)]: ColumnMeta } = {
         name: "Repeatable",
         readableName: "Repeatable"
     },
-    SectionDetail: {
-        name: "SectionDetail",
+    SectionDetails: {
+        name: "SectionDetails",
         readableName: "Section Detail"
     }
 }
