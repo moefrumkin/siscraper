@@ -119,9 +119,11 @@ const SISState = () => {
             defaultValue={DefaultColumns.map(column => ({value: column, label: column.readableName}))}
             onChange={selection => setHeaders(selection.map(column => column.value))}
           />
-          {courses.length > 0 && <div className='ag-theme-quartz' style={{ height: "50em", width: "100em" }}>
-            <CourseTable courses={courses} headers={headers} onCourseSelected={setSelectedCourse}/>
-          </div>}
+          {courses.length > 0 &&
+            <div className='ag-theme-quartz' style={{ height: "50em", width: "100em" }}>
+              <CourseTable courses={courses} headers={headers} onCourseSelected={setSelectedCourse}/>
+            </div>
+          }
         </div>}
       <Dialog
         open={selectedCourse != null}
