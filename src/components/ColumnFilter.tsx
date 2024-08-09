@@ -2,23 +2,33 @@ import { CustomFilterProps, useGridFilter } from "ag-grid-react";
 import { Filter } from "../lib/datatypes";
 import { useCallback, useMemo } from "react";
 
-export const ColumnFilter = <T,>({filters, filterProps}: {filters: Filter<T>[], filterProps: CustomFilterProps<T, unknown, Set<Filter<T>>>}) => {
+export type ColumnFilterProps<T> = {
+  filters: Filter<T>[],
+  filterProps: CustomFilterProps<T, unknown, Set<Filter<T>>>
+}
+
+export const ColumnFilter = <T,>({filters, filterProps}: ColumnFilterProps<T>) => {
   const {onModelChange, model} = filterProps;
 
+  // By default, all filters are active
   const defaultSelection = useMemo(() => new Set(filters), [filters])
 
+  // If the model is null, use the default selection
   const selectedFilters = model || defaultSelection;
 
-  const checkboxClicked = (filter: Filter<T>, active: boolean) => {
-    const filters = new Set(selectedFilters);
+  const onFilterChanged = (filter: Filter<T>, active: boolean) => {
+    // Copy the current set of filters
+    const currentFilters = new Set(selectedFilters);
 
+    // Toggle the changed filter
     if(active) {
-      filters.add(filter)
+      currentFilters.add(filter)
     } else {
-      filters.delete(filter)
+      currentFilters.delete(filter)
     }
 
-    onModelChange(filters)
+    // Update the model
+    onModelChange(currentFilters)
   }
 
   const invertSelection = () => {
@@ -28,6 +38,10 @@ export const ColumnFilter = <T,>({filters, filterProps}: {filters: Filter<T>[], 
   const doesFilterPass = useCallback(({data}: {data: T, node: unknown}) => (
     Array.from(selectedFilters).some(filter => filter.predicate(data))
   ), [selectedFilters])
+
+  const resetSelection = () => {
+    onModelChange(defaultSelection)
+  }
 
   useGridFilter({doesFilterPass})
 
@@ -39,12 +53,15 @@ export const ColumnFilter = <T,>({filters, filterProps}: {filters: Filter<T>[], 
           filters.map(filter => 
             <div key={filter.name}>
               <p>{filter.name}</p>
-              <input type="checkbox" checked = {selectedFilters.has(filter)} onChange={(event) => checkboxClicked(filter, event.target.checked)}/>
+              <input
+                type="checkbox"
+                checked = {selectedFilters.has(filter)}
+                onChange={(event) => onFilterChanged(filter, event.target.checked)}/>
             </div>
           )
         }
       </form>
-      <button onClick={() => onModelChange(defaultSelection)}>Reset Selection</button>
+      <button onClick={resetSelection}>Reset Selection</button>
       <button onClick={invertSelection}>Invert Selection</button>
     </div>
   )
