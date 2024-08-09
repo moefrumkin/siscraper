@@ -8,7 +8,7 @@ import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHea
 import { ColumnFilter } from './ColumnFilter';
 import { CustomFilterProps } from 'ag-grid-react';
 import { Loading } from './Loading';
-import { Box, Modal } from '@mui/material';
+import { Box, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { CourseDisplay } from './CourseDisplay';
 import { APIError } from './APIError';
 
@@ -137,16 +137,22 @@ const SISState = () => {
                                  />
                     </div>}
                 </div>}
-                <Modal
+                <Dialog
                     open={selectedCourse != null}
                     onClose={() => setSelectedCourse(null)}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
+                    fullWidth
+                    scroll="paper"
                     >
-                    <Box sx={modalStyle}>
-                    {selectedCourse !== null && <CourseDisplay courseNumber={selectedCourse.OfferingName} courseSection={selectedCourse.SectionName} term={{Name: selectedCourse.Term}} terms={terms}/>}
-                    </Box>
-                    </Modal>
+                        <DialogTitle>Course Details</DialogTitle>
+                    <DialogContent
+                        style={{height: "80vh", width: "100%"}}
+                        dividers={true}
+                    >
+                        <Box sx={modalStyle}>
+                        {selectedCourse !== null && <CourseDisplay courseNumber={selectedCourse.OfferingName} courseSection={selectedCourse.SectionName} term={{Name: selectedCourse.Term}} terms={terms}/>}
+                        </Box>
+                    </DialogContent>
+                </Dialog>
         </div>
     )
 }
