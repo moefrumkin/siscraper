@@ -152,7 +152,7 @@ const SISState = () => {
         fullWidth
         scroll="paper"
       >
-        <DialogTitle>Course Details</DialogTitle>
+        <DialogTitle>{selectedCourse?.OfferingName}: {selectedCourse?.Title}</DialogTitle>
         <DialogContent
           style={{height: "80vh"}}
           dividers={true}
