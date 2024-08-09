@@ -5,7 +5,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css"
 import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, Labeled } from "../lib/datatypes";
 import { Loading } from "./Loading";
-import { Box, Button, Container, Dialog, DialogContent, DialogTitle, Grid, Stack, Typography } from "@mui/material";
+import { Button, Container, Dialog, DialogContent, DialogTitle, Stack, Typography } from "@mui/material";
 import { CourseDisplay } from "./CourseDisplay";
 import { APIError } from "./APIError";
 import { CourseTable } from "./CourseTable";
@@ -75,6 +75,7 @@ const SISState = () => {
 
   const selectContainerStyle = {
     width: "30%",
+    textAlign: "center"
   }
 
   return (
@@ -85,6 +86,7 @@ const SISState = () => {
           <Container
             sx={selectContainerStyle}
           >
+            <Typography variant="h3">Search For:</Typography>
             <Stack
               spacing={1}
             >
@@ -93,7 +95,7 @@ const SISState = () => {
                 options={schools.map(school => ({ value: school, label: school.Name }))}
                 onChange={selection => setSelectedSchools(selection.map(selection => selection.value))}
                 value={selectedSchools.map(school => ({value: school, label: school.Name}))}
-                placeholder="Select Schools..."
+                placeholder="Schools..."
               />
               <Select<Labeled<Department>, true, Labeled<School> & { readonly options: readonly Labeled<Department>[] }> 
                 isMulti
@@ -113,32 +115,35 @@ const SISState = () => {
                   </div>
                 )}
                 value={selectedDepartments.map(department => ({value: department, label: department.DepartmentName}))}
-                placeholder="Select Departments..."
+                placeholder="Departments..."
               />
               <Select isMulti
                 styles={menuStyle}
                 options={terms.map(term => ({ value: term, label: term.Name }))}
                 onChange={selection => setSelectedTerms(selection.map(selection => selection.value))}
                 value={selectedTerms.map(term => ({value: term, label: term.Name}))}
-                placeholder="Select Terms..."
+                placeholder="Terms..."
               />
             </Stack>
+ 
+            <Button onClick={getCourses}>Search</Button>
+            <Button onClick={() => {setCourses([]); setError(null)}}>Clear</Button>
+
           </Container>
 
-          <Button onClick={getCourses}>Search Courses</Button>
-          <Button onClick={() => {setCourses([]); setError(null)}}>Clear</Button>
 
-          <Select<Labeled<ColumnMeta>, true, GroupBase<Labeled<ColumnMeta>>>
-            isMulti
-            styles={menuStyle}
-            options={Object.values(CourseHeader).map(header => ({value: header, label: header.readableName}))}
-            defaultValue={DefaultColumns.map(column => ({value: column, label: column.readableName}))}
-            onChange={selection => setHeaders(selection.map(column => column.value))}
-          />
+
           {courses.length > 0 &&
-            <div className='ag-theme-quartz' style={{ height: "50em", width: "100em" }}>
+            <Container className='ag-theme-quartz' sx={{ height: "50em", width: "100em" }}>
+              <Select<Labeled<ColumnMeta>, true, GroupBase<Labeled<ColumnMeta>>>
+                isMulti
+                styles={menuStyle}
+                options={Object.values(CourseHeader).map(header => ({value: header, label: header.readableName}))}
+                defaultValue={DefaultColumns.map(column => ({value: column, label: column.readableName}))}
+                onChange={selection => setHeaders(selection.map(column => column.value))}
+              />
               <CourseTable courses={courses} headers={headers} onCourseSelected={setSelectedCourse}/>
-            </div>
+            </Container>
           }
         </div>}
       <Dialog
