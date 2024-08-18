@@ -86,7 +86,7 @@ const SISState = () => {
           <Container
             sx={selectContainerStyle}
           >
-            <Typography variant="h3">Search For:</Typography>
+                      <Typography variant="h3">Search Courses:</Typography>
             <Stack
               spacing={1}
             >
@@ -134,7 +134,7 @@ const SISState = () => {
 
 
           {courses.length > 0 &&
-            <Container className='ag-theme-quartz' sx={{ height: "50em", width: "100em" }}>
+                      <Container className='ag-theme-quartz' sx={{ height: "50em", width: "90%" }}>
               <Select<Labeled<ColumnMeta>, true, GroupBase<Labeled<ColumnMeta>>>
                 isMulti
                 styles={menuStyle}
