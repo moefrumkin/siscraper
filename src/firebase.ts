@@ -4,12 +4,12 @@ import { Course, CourseDetailsQuery, Department, School, SearchQuery, Term, Term
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyAxNaQnjQWbyiZxI-2W5xDV2vI3nYP65BY",
-    authDomain: "siscraper-37151.firebaseapp.com",
-    projectId: "siscraper-37151",
-    storageBucket: "siscraper-37151.appspot.com",
-    messagingSenderId: "411410505345",
-    appId: "1:411410505345:web:4121f37bda45c3b1c6b780"
+  apiKey: "AIzaSyAxNaQnjQWbyiZxI-2W5xDV2vI3nYP65BY",
+  authDomain: "siscraper-37151.firebaseapp.com",
+  projectId: "siscraper-37151",
+  storageBucket: "siscraper-37151.appspot.com",
+  messagingSenderId: "411410505345",
+  appId: "1:411410505345:web:4121f37bda45c3b1c6b780"
 };
 
 // Initialize Firebase
@@ -24,5 +24,5 @@ export const getCourseDetails = httpsCallable<TermedCourseDetailsQuery, Course[]
 export const getCourseSections = httpsCallable<CourseDetailsQuery, Course[]>(firebaseFunctions, "getCourseSections")
 
 if (process.env.NODE_ENV !== "production") {
-    connectFunctionsEmulator(firebaseFunctions, "localhost", 5001);
+  connectFunctionsEmulator(firebaseFunctions, "localhost", 5001);
 }

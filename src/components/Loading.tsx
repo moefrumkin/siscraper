@@ -1,9 +1,7 @@
-import { PulseLoader } from "react-spinners";
+import { CircularProgress, Container } from "@mui/material";
 
 export const Loading = () => (
-    <div>
-        <PulseLoader
-            color = "SlateBlue"
-         />
-    </div>
+  <Container>
+    <CircularProgress/>
+  </Container>
 )
