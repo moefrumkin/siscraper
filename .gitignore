@@ -25,3 +25,7 @@ dist-ssr
 
 # Environment Secrets
 functions/.env
+
+# Compiled Functions
+functions/lib/**/*.js
+functions/lib/**/*.js.map
