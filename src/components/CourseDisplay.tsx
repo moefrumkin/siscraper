@@ -112,7 +112,7 @@ const CourseHistory = ({sections}: {sections: Course[]}) => {
 
   //TODO: there must be a more efficient way to do this
   const series = useMemo(() => [{label: "Enrollment", data: terms.map(term => sections.filter(course => course.Term == term).map(course => parseInt(course.MaxSeats) - parseInt(course.OpenSeats)).reduce((prev, curr) => prev + curr))}, 
-    {label: "Waitlist", data: terms.map(term => sections.filter(course => course.Term == term).map(course => parseInt(course.Waitlisted)).reduce((prev, curr) => prev + curr))}], [terms, sections])
+    { label: "Sections", data: terms.map(term => sections.filter(course => course.Term == term).length) }], [terms, sections])
 
   return (
     <BarChart
