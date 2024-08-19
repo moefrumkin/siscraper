@@ -10,6 +10,8 @@ import Select from "react-select";
 export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {courseNumber: string, courseSection: string, term: Term, terms: Term[]}) => {
   const [loading, setLoading] = useState<boolean>(true)
 
+  const [loadingSection, setLoadingSections] = useState<boolean>(true)
+
   const [course, setCourse] = useState<Course | null>()
 
   const [sections, setSections] = useState<Course[]>([])
@@ -34,9 +36,11 @@ export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {cours
   }, [courseNumber, selectedCourseSection, selectedTerm])
 
   useEffect(() => {
+    setLoadingSections(true)
     getCourseSections({courseNumber: courseNumber, sectionNumber: courseSection})
       .then((result) => {setSections(result.data); console.log(result); })
       .catch(setError)
+      .finally(() => setLoadingSections(false))
   }, [courseNumber, courseSection])
 
   return (
@@ -58,20 +62,20 @@ export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {cours
         </>
           }
         </>}
-          <Box>
-            <Typography>Course Demand</Typography>
+          {loadingSection ? <Loading /> : <Box>
+            <Typography variant="h3">Course Demand</Typography>
             <Select<Labeled<Term>>
-              defaultValue={{label: selectedTerm.Name, value: selectedTerm}}
-              options={terms.map(term => ({value: term, label: term.Name}))}
+              defaultValue={{ label: selectedTerm.Name, value: selectedTerm }}
+              options={terms.map(term => ({ value: term, label: term.Name }))}
               onChange={selection => selection && setSelectedTerm(selection.value)}
             />
-            <ImageList cols={1} sx={{gridAutoFlow: "column"}}>
+            <ImageList cols={1} sx={{ gridAutoFlow: "column" }}>
               {sectionsForSelectedTerm.map(section => (
                 <ImageListItem>
                   <Card>
                     <CardActionArea onClick={() => setSelectedCourseSection(section.SectionName)}>
                       <CardContent>
-                        <SectionDemand course={section}/>
+                        <SectionDemand course={section} />
                         <Typography>{section.SectionName}</Typography>
                       </CardContent>
                     </CardActionArea>
@@ -79,8 +83,8 @@ export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {cours
                 </ImageListItem>
               ))}
             </ImageList>
-            <CourseHistory sections={sections}/>
-          </Box>
+            <CourseHistory sections={sections} />
+          </Box>}
         </>}
     </Box>)
 }
