@@ -29,3 +29,6 @@ functions/.env
 # Compiled Functions
 functions/lib/**/*.js
 functions/lib/**/*.js.map
+
+# Firebase
+.firebase
