@@ -1,5 +1,5 @@
 import { AgGridReact, CustomFilterProps } from "ag-grid-react"
-import { ColumnMeta, Course, Filter } from "../lib/datatypes"
+import { ColumnMeta, Course, Filter } from "siscraper-shared"
 import { ColumnFilter } from "./ColumnFilter"
 import { RowClickedEvent } from "ag-grid-community"
 

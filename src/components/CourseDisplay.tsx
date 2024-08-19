@@ -1,5 +1,5 @@
 import { Box, Card, CardActionArea, CardContent, ImageList, ImageListItem, Typography } from "@mui/material";
-import { Course, Labeled, Term } from "../lib/datatypes";
+import { Course, Labeled, Term } from "siscraper-shared";
 import { BarChart, PieChart } from "@mui/x-charts";
 import { useEffect, useMemo, useState } from "react";
 import { getCourseDetails, getCourseSections } from "../firebase";

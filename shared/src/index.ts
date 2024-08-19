@@ -95,10 +95,10 @@ export type CourseDetailsQuery = {
     term?: string
 }
 
-export type TermedCourseDetailsQuery = CourseDetailsQuery & {term: string}
+export type TermedCourseDetailsQuery = CourseDetailsQuery & { term: string }
 
 // A utility type for the react-select Select component
-export type Labeled<T> =  {
+export type Labeled<T> = {
     value: T,
     label: string
 }

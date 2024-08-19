@@ -1,5 +1,5 @@
 import { CustomFilterProps, useGridFilter } from "ag-grid-react";
-import { Filter } from "../lib/datatypes";
+import { Filter } from "siscraper-shared";
 import { useCallback, useMemo } from "react";
 
 export type ColumnFilterProps<T> = {

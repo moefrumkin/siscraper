@@ -3,7 +3,7 @@ import { getDepartments, getSchools, getTerms, searchCourses } from "../firebase
 import Select, { CSSObjectWithLabel, GroupBase } from "react-select"
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css"
-import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, Labeled } from "../lib/datatypes";
+import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, Labeled } from "siscraper-shared";
 import { Loading } from "./Loading";
 import { Button, Container, Dialog, DialogContent, DialogTitle, Stack, Typography } from "@mui/material";
 import { CourseDisplay } from "./CourseDisplay";
