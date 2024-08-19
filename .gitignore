@@ -30,5 +30,5 @@ functions/.env
 functions/lib/**/*.js
 functions/lib/**/*.js.map
 
-# Firebase
-.firebase
+# Firebase cache
+.firebase/
