@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/functions";
-import { Course, CourseDetailsQuery, Department, School, SearchQuery, Term, TermedCourseDetailsQuery } from "./lib/datatypes";
+import { Course, CourseDetailsQuery, Department, School, SearchQuery, Term, TermedCourseDetailsQuery } from "siscraper-shared";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {

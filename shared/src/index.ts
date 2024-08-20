@@ -6,7 +6,12 @@ export type School = {
 export type Department = {
     DepartmentName: string
     SchoolName: string
-}
+};
+
+export const isDepartment = (department: unknown): department is Department => (
+    Object.prototype.hasOwnProperty.call(department, "DepartmentName") &&
+    Object.prototype.hasOwnProperty.call(department, "SchoolName")
+)
 
 export type Term = {
     Name: string
@@ -89,13 +94,50 @@ export type SearchQuery = {
     departments: Department[]
 }
 
+export type CourseQuery = {
+    terms: Array<string>,
+    schools: Array<string>,
+    departments: Array<Department>
+}
+
+export const isCourseQuery = (context: object): context is CourseQuery => {
+    const isArrayOfString = (arr: unknown): arr is Array<string> => (
+        Array.isArray(arr) && arr.every((el) => typeof el === "string")
+    );
+
+    return "terms" in context &&
+        isArrayOfString(context.terms) &&
+        "schools" in context &&
+        isArrayOfString(context.schools) &&
+        "departments" in context &&
+        Array.isArray(context.departments) &&
+        context.departments.every((dept: unknown) => isDepartment(dept));
+};
+
 export type CourseDetailsQuery = {
     courseNumber: string,
     sectionNumber: string,
     term?: string
 }
 
-export type TermedCourseDetailsQuery = CourseDetailsQuery & { term: string }
+export type TermedCourseDetailsQuery = CourseDetailsQuery &
+{ term: string }
+
+export const isCourseDetailsQuery =
+    (query: object): query is CourseDetailsQuery => (
+        "courseNumber" in query &&
+        typeof query.courseNumber === "string" &&
+        "sectionNumber" in query &&
+        typeof query.sectionNumber === "string"
+    );
+
+export const isTermedCourseDetailsQuery =
+    (query: object): query is TermedCourseDetailsQuery => (
+        isCourseDetailsQuery(query) &&
+        "term" in query &&
+        typeof query.term === "string"
+    );
+
 
 // A utility type for the react-select Select component
 export type Labeled<T> = {
