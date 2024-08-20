@@ -1,0 +1,16 @@
+{
+    "name": "shared",
+    "version": "1.0.0",
+    "description": "data types and functions shared between the frontend and firebase functions",
+    "main": "lib/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "tsc": "tsc"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^22.4.1",
+        "typescript": "^5.5.4"
+    }
+}

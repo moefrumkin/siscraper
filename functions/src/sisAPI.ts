@@ -1,6 +1,6 @@
 import axios from "axios";
 import {defineString} from "firebase-functions/params";
-import {CourseDetailsQuery, CourseQuery, TermedCourseDetailsQuery} from ".";
+import { CourseDetailsQuery, CourseQuery, TermedCourseDetailsQuery } from "siscraper-shared";
 
 const APIKey = defineString("SIS_API_KEY");
 const APIBase = "https://sis.jhu.edu/api/classes";
