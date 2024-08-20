@@ -28,32 +28,25 @@ import { isCourseQuery, isTermedCourseDetailsQuery, isCourseDetailsQuery } from 
 //   response.send("Hello from Firebase!");
 // });
 
-export const getSchools = onCall((_) => {
-  return requestSchools()
-    .catch((error) => {
-      logger.error(error);
-      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-    });
-});
+const handleInternalError = (error: Error) => {
+  logger.log(error);
+  throw new HttpsError("internal", `An Internal Error Occured: ${error}`)
+}
+
+export const getSchools = onCall((_) =>
+  requestSchools().catch(handleInternalError)
+);
 
 export const getDepartments = onCall((context) => {
   const school = context.data.school;
 
   return requestDepartments(school)
-    .catch((error) => {
-      logger.error(error);
-      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-    });
-
+    .catch(handleInternalError)
 });
 
-export const getTerms = onCall((_) => {
-  return requestTerms()
-    .catch((error) => {
-      logger.error(error);
-      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-    });
-});
+export const getTerms = onCall((_) =>
+  requestTerms().catch(handleInternalError)
+);
 
 export const searchCourses = onCall((context) => {
   const query = context.data;
@@ -64,18 +57,10 @@ export const searchCourses = onCall((context) => {
   }
 
   if (query.departments.length == 0 && query.schools.length == 0) {
-    const courses = queryCourses(query)
-      .then((result) => {
-        return result;
-      })
-      .catch((error) => {
-        logger.error(error);
-        throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-      });
-
-    return courses;
+    return queryCourses(query)
+      .catch(handleInternalError)
   } else {
-    const courses = Promise.all([
+    return Promise.all([
       query.schools.map((school) => queryCourses({
         terms: query.terms, schools: [school], departments: [],
       })),
@@ -83,12 +68,7 @@ export const searchCourses = onCall((context) => {
         terms: query.terms, schools: [], departments: [department],
       }))].flat()).then((result) => {
       return result.flat(1);
-    })
-      .catch((error) => {
-        logger.error(error);
-        throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-      });
-    return courses;
+      }).catch(handleInternalError)
   }
 });
 
@@ -101,10 +81,7 @@ export const getCourseDetails = onCall((context) => {
   }
 
   return requestCourseDetails(query)
-    .catch((error) => {
-      logger.error(error);
-      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-    });
+    .catch(handleInternalError)
 });
 
 
@@ -117,9 +94,5 @@ export const getCourseSections = onCall((context) => {
   }
 
   return requestCourseSections(query)
-    .catch((error) => {
-      logger.error(error);
-      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-    });
-
+    .catch(handleInternalError)
 });
