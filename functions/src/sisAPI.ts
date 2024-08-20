@@ -5,34 +5,24 @@ import { CourseDetailsQuery, CourseQuery, TermedCourseDetailsQuery } from "siscr
 const APIKey = defineString("SIS_API_KEY");
 const APIBase = "https://sis.jhu.edu/api/classes";
 
-export type School ={
-    Name: string
-}
-
-export const isSearchContext = (query: object): query is CourseQuery => {
-  const isArrayOfString = (arr: unknown): arr is Array<string> => (
-    Array.isArray(arr) && arr.every((el) => typeof el === "string")
-  );
-
-  return "terms" in query &&
-        isArrayOfString(query.terms) &&
-        "schools" in query &&
-        isArrayOfString(query.schools) &&
-        "departments" in query &&
-        isArrayOfString(query.departments);
-};
-
-export const requestSchools = () =>
-  axios.get(`${APIBase}/codes/schools?key=${APIKey.value()}`)
+/**
+ * Creates a function that requests data from an enpoint.
+ * Prepends the API base and appends the API Key
+ * @param formatter
+ * @returns 
+ */
+const request = <T>(formatter: ((arg: T) => string)) => (arg: T) =>
+  axios.get(`${APIBase}/${formatter(arg)}?key=${APIKey.value()}`)
     .then((response) => response.data);
 
-export const requestDepartments = (school: string) =>
-  axios.get(`${APIBase}/codes/departments/${school}?key=${APIKey.value()}`)
-    .then((response) => response.data);
+const requestString = (route: string) => request<void>(() => route)
 
-export const requestTerms = () =>
-  axios.get(`${APIBase}/codes/terms?key=${APIKey.value()}`)
-    .then((response) => response.data);
+export const requestSchools = requestString("codes/schools")
+
+export const requestDepartments =
+  request((school: string) => `codes/departments/${school}`)
+
+export const requestTerms = requestString(`codes/terms`)
 
 export const formatCourseQuery = (query: CourseQuery) => (
   [query.terms.map((term) => `Term=${term}`).join("&"),
@@ -45,29 +35,19 @@ export const formatCourseQuery = (query: CourseQuery) => (
     .join("&")
 );
 
-export const queryCourses = (query: CourseQuery) =>
-  axios
-    .get(`${APIBase}?${encodeURI(formatCourseQuery(query))}\
-    &key=${APIKey.value()}`)
-    .then((response) => response.data);
+export const queryCourses = request((query: CourseQuery) =>
+  encodeURI(formatCourseQuery(query))
+)
 
-export const requestCourseDetails =
-(query: TermedCourseDetailsQuery) =>
-  axios
-    .get(`${APIBase}/${query.courseNumber.replace(/\./g, "")}` +
-    `${query.sectionNumber}/` +
-    `${encodeURI(query.term)}?key=${APIKey.value()}`)
-    .then((response) => response.data);
+const formatCourseDetailsRequest = (query: TermedCourseDetailsQuery) =>
+  `${query.courseNumber.replace(/\./g, "")}` +
+  `${query.sectionNumber}` +
+  `${encodeURI(query.term)}`
 
+export const requestCourseDetails = request(formatCourseDetailsRequest)
 
-export const requestCourseSections = (query: CourseDetailsQuery) => {
-  const termTerm = query.term? `/${encodeURI(query.term)}` : "";
+const formatCourseSectionsQuery = (query: CourseDetailsQuery) =>
+  `${query.courseNumber.replace(/\./g, "")}` +
+  (query.term ? `${encodeURI(query.term)}` : "")
 
-  return axios
-    .get(`${APIBase}/${query.courseNumber.replace(/\./g, "")}` +
-        termTerm +
-        `?key=${APIKey.value()}`)
-    .then((response) => response.data);
-};
-
-// TODO: add a data extraction function
+export const requestCourseSections = request(formatCourseSectionsQuery)

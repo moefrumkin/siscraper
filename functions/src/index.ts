@@ -28,46 +28,25 @@ import { isCourseQuery, isTermedCourseDetailsQuery, isCourseDetailsQuery } from 
 //   response.send("Hello from Firebase!");
 // });
 
-export const getSchools = onCall((_) => {
-  const data = requestSchools()
-    .then((result) => {
-      return result;
-    })
-    .catch((error) => {
-      logger.error(error);
-      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-    });
+const handleInternalError = (error: Error) => {
+  logger.log(error);
+  throw new HttpsError("internal", `An Internal Error Occured: ${error}`)
+}
 
-  return data;
-});
+export const getSchools = onCall((_) =>
+  requestSchools().catch(handleInternalError)
+);
 
 export const getDepartments = onCall((context) => {
   const school = context.data.school;
 
-  const departments = requestDepartments(school)
-    .then((result) => {
-      return result;
-    })
-    .catch((error) => {
-      logger.error(error);
-      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-    });
-
-  return departments;
+  return requestDepartments(school)
+    .catch(handleInternalError)
 });
 
-export const getTerms = onCall((_) => {
-  const terms = requestTerms()
-    .then((result) => {
-      return result;
-    })
-    .catch((error) => {
-      logger.error(error);
-      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-    });
-
-  return terms;
-});
+export const getTerms = onCall((_) =>
+  requestTerms().catch(handleInternalError)
+);
 
 export const searchCourses = onCall((context) => {
   const query = context.data;
@@ -78,18 +57,10 @@ export const searchCourses = onCall((context) => {
   }
 
   if (query.departments.length == 0 && query.schools.length == 0) {
-    const courses = queryCourses(query)
-      .then((result) => {
-        return result;
-      })
-      .catch((error) => {
-        logger.error(error);
-        throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-      });
-
-    return courses;
+    return queryCourses(query)
+      .catch(handleInternalError)
   } else {
-    const courses = Promise.all([
+    return Promise.all([
       query.schools.map((school) => queryCourses({
         terms: query.terms, schools: [school], departments: [],
       })),
@@ -97,12 +68,7 @@ export const searchCourses = onCall((context) => {
         terms: query.terms, schools: [], departments: [department],
       }))].flat()).then((result) => {
       return result.flat(1);
-    })
-      .catch((error) => {
-        logger.error(error);
-        throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-      });
-    return courses;
+      }).catch(handleInternalError)
   }
 });
 
@@ -114,16 +80,8 @@ export const getCourseDetails = onCall((context) => {
     throw new HttpsError("invalid-argument", "Malformed Search Request");
   }
 
-  const details = requestCourseDetails(query)
-    .then((result) => {
-      return result;
-    })
-    .catch((error) => {
-      logger.error(error);
-      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-    });
-
-  return details;
+  return requestCourseDetails(query)
+    .catch(handleInternalError)
 });
 
 
@@ -135,14 +93,6 @@ export const getCourseSections = onCall((context) => {
     throw new HttpsError("invalid-argument", "Malformed Search Request");
   }
 
-  const details = requestCourseSections(query)
-    .then((result) => {
-      return result;
-    })
-    .catch((error) => {
-      logger.error(error);
-      throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
-    });
-
-  return details;
+  return requestCourseSections(query)
+    .catch(handleInternalError)
 });
