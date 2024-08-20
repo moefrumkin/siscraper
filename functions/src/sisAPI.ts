@@ -5,22 +5,6 @@ import { CourseDetailsQuery, CourseQuery, TermedCourseDetailsQuery } from "siscr
 const APIKey = defineString("SIS_API_KEY");
 const APIBase = "https://sis.jhu.edu/api/classes";
 
-export type School ={
-    Name: string
-}
-
-export const isSearchContext = (query: object): query is CourseQuery => {
-  const isArrayOfString = (arr: unknown): arr is Array<string> => (
-    Array.isArray(arr) && arr.every((el) => typeof el === "string")
-  );
-
-  return "terms" in query &&
-        isArrayOfString(query.terms) &&
-        "schools" in query &&
-        isArrayOfString(query.schools) &&
-        "departments" in query &&
-        isArrayOfString(query.departments);
-};
 
 export const requestSchools = () =>
   axios.get(`${APIBase}/codes/schools?key=${APIKey.value()}`)

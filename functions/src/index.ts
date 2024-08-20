@@ -29,44 +29,30 @@ import { isCourseQuery, isTermedCourseDetailsQuery, isCourseDetailsQuery } from 
 // });
 
 export const getSchools = onCall((_) => {
-  const data = requestSchools()
-    .then((result) => {
-      return result;
-    })
+  return requestSchools()
     .catch((error) => {
       logger.error(error);
       throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
     });
-
-  return data;
 });
 
 export const getDepartments = onCall((context) => {
   const school = context.data.school;
 
-  const departments = requestDepartments(school)
-    .then((result) => {
-      return result;
-    })
+  return requestDepartments(school)
     .catch((error) => {
       logger.error(error);
       throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
     });
 
-  return departments;
 });
 
 export const getTerms = onCall((_) => {
-  const terms = requestTerms()
-    .then((result) => {
-      return result;
-    })
+  return requestTerms()
     .catch((error) => {
       logger.error(error);
       throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
     });
-
-  return terms;
 });
 
 export const searchCourses = onCall((context) => {
@@ -114,16 +100,11 @@ export const getCourseDetails = onCall((context) => {
     throw new HttpsError("invalid-argument", "Malformed Search Request");
   }
 
-  const details = requestCourseDetails(query)
-    .then((result) => {
-      return result;
-    })
+  return requestCourseDetails(query)
     .catch((error) => {
       logger.error(error);
       throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
     });
-
-  return details;
 });
 
 
@@ -135,14 +116,10 @@ export const getCourseSections = onCall((context) => {
     throw new HttpsError("invalid-argument", "Malformed Search Request");
   }
 
-  const details = requestCourseSections(query)
-    .then((result) => {
-      return result;
-    })
+  return requestCourseSections(query)
     .catch((error) => {
       logger.error(error);
       throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
     });
 
-  return details;
 });
