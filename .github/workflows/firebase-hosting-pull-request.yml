@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm --prefix ./shared ci && npm --prefix ./shared tsc
+      - run: npm --prefix ./shared ci && npm --prefix ./shared run tsc
       - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
