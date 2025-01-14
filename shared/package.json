@@ -1,11 +1,13 @@
 {
     "name": "shared",
+    "type": "module",
     "version": "1.0.0",
     "description": "data types and functions shared between the frontend and firebase functions",
     "main": "lib/index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "tsc": "tsc"
+        "tsc": "tsc",
+        "dev": "tsc --watch"
     },
     "author": "",
     "license": "ISC",

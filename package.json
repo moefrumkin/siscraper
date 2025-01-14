@@ -4,10 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "dev:all": "concurrently \"npm run shared:dev\" \"npm run functions:dev\" \"npm run dev\"",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "shared:dev": "cd shared && npm run dev",
+    "functions:dev": "cd functions && npm run dev"
   },
   "dependencies": {
     "@ag-grid-community/react": "32.0.1",
