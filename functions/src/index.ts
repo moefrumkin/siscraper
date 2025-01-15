@@ -16,8 +16,14 @@ import {
   requestDepartments,
   requestSchools,
   requestTerms,
-} from "./sisAPI";
-import { isCourseQuery, isTermedCourseDetailsQuery, isCourseDetailsQuery } from "siscraper-shared";
+  // We need to have the .js extension for the typescript compiler
+  // Otherwise, the compiled code would not properly link the module
+} from "./sisAPI.js";
+import {
+  isCourseQuery,
+  isTermedCourseDetailsQuery,
+  isCourseDetailsQuery,
+  School, Department} from "siscraper-shared";
 
 
 // Start writing functions
@@ -30,8 +36,8 @@ import { isCourseQuery, isTermedCourseDetailsQuery, isCourseDetailsQuery } from 
 
 const handleInternalError = (error: Error) => {
   logger.log(error);
-  throw new HttpsError("internal", `An Internal Error Occured: ${error}`)
-}
+  throw new HttpsError("internal", `An Internal Error Occured: ${error}`);
+};
 
 export const getSchools = onCall((_) =>
   requestSchools().catch(handleInternalError)
@@ -41,7 +47,7 @@ export const getDepartments = onCall((context) => {
   const school = context.data.school;
 
   return requestDepartments(school)
-    .catch(handleInternalError)
+    .catch(handleInternalError);
 });
 
 export const getTerms = onCall((_) =>
@@ -58,17 +64,17 @@ export const searchCourses = onCall((context) => {
 
   if (query.departments.length == 0 && query.schools.length == 0) {
     return queryCourses(query)
-      .catch(handleInternalError)
+      .catch(handleInternalError);
   } else {
     return Promise.all([
-      query.schools.map((school) => queryCourses({
+      query.schools.map((school: string) => queryCourses({
         terms: query.terms, schools: [school], departments: [],
       })),
-      query.departments.map((department) => queryCourses({
+      query.departments.map((department: Department) => queryCourses({
         terms: query.terms, schools: [], departments: [department],
       }))].flat()).then((result) => {
       return result.flat(1);
-      }).catch(handleInternalError)
+    }).catch(handleInternalError);
   }
 });
 
@@ -81,7 +87,7 @@ export const getCourseDetails = onCall((context) => {
   }
 
   return requestCourseDetails(query)
-    .catch(handleInternalError)
+    .catch(handleInternalError);
 });
 
 
@@ -94,5 +100,5 @@ export const getCourseSections = onCall((context) => {
   }
 
   return requestCourseSections(query)
-    .catch(handleInternalError)
+    .catch(handleInternalError);
 });

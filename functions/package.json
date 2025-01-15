@@ -1,9 +1,11 @@
 {
   "name": "functions",
+  "type": "module",
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
     "build": "tsc",
     "build:watch": "tsc --watch",
+    "dev": "npm run serve",
     "serve": "npm run build  -- --watch | firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
@@ -19,7 +21,7 @@
     "axios": "^1.7.2",
     "firebase-admin": "^12.1.0",
     "firebase-functions": "^5.0.0",
-    "siscraper-shared": "file:../shared"
+    "siscraper-shared": "file:../shared/lib"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
