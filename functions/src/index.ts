@@ -23,7 +23,7 @@ import {
   isCourseQuery,
   isTermedCourseDetailsQuery,
   isCourseDetailsQuery,
-} from "siscraper-shared";
+  School, Department} from "siscraper-shared";
 
 
 // Start writing functions
@@ -67,10 +67,10 @@ export const searchCourses = onCall((context) => {
       .catch(handleInternalError);
   } else {
     return Promise.all([
-      query.schools.map((school) => queryCourses({
+      query.schools.map((school: string) => queryCourses({
         terms: query.terms, schools: [school], departments: [],
       })),
-      query.departments.map((department) => queryCourses({
+      query.departments.map((department: Department) => queryCourses({
         terms: query.terms, schools: [], departments: [department],
       }))].flat()).then((result) => {
       return result.flat(1);
