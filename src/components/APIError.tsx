@@ -1,3 +1,8 @@
+/**
+ * A component to display an error that has occured with a call to a Firebase function 
+ * @param props
+ * @property error - the error that has occured
+ */
 export const APIError = (props: { error: Error }) => (
   <div>
     <h2>An error occured:</h2>

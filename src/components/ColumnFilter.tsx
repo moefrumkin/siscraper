@@ -2,11 +2,18 @@ import { CustomFilterProps, useGridFilter } from "ag-grid-react";
 import { Filter } from "siscraper-shared";
 import { useCallback, useMemo } from "react";
 
+/**
+ * Properties for a custom column filter.
+ */
 export type ColumnFilterProps<T> = {
   filters: Filter<T>[],
   filterProps: CustomFilterProps<T, unknown, Set<Filter<T>>>
 }
 
+/**
+ * A custom filter for the course display table. 
+ * An item passes the filter if it passes one of the predicates in the props
+ */
 export const ColumnFilter = <T,>({filters, filterProps}: ColumnFilterProps<T>) => {
   const {onModelChange, model} = filterProps;
 
