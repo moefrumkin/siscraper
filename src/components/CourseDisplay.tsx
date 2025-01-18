@@ -7,25 +7,37 @@ import { Loading } from "./Loading";
 import { APIError } from "./APIError";
 import Select from "react-select";
 
+/**
+ * A display that shows detailed information about a course and its sections
+ */
 export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {courseNumber: string, courseSection: string, term: Term, terms: Term[]}) => {
+  // Are details about the course loading?
   const [loading, setLoading] = useState<boolean>(true)
 
+  // Are the other sections of the course loading?
   const [loadingSection, setLoadingSections] = useState<boolean>(true)
 
+  // The course being displayed
   const [course, setCourse] = useState<Course | null>()
 
+  // All sections of the course being displayed
   const [sections, setSections] = useState<Course[]>([])
 
+  // The details of the course section, if loaded
   const sectionDetails = useMemo(() => course?.SectionDetails[0], [course?.SectionDetails])
 
   const [error, setError] = useState<Error | null>(null);
 
+  // The selected section of the course to display
   const [selectedCourseSection, setSelectedCourseSection] = useState<string>(courseSection);
 
+  // The term to show courses from
   const [selectedTerm, setSelectedTerm] = useState<Term>(term);
 
-  const sectionsForSelectedTerm = useMemo(() => sections.filter(section => section.Term == selectedTerm.Name), [sections, selectedTerm])
+  const sectionsForSelectedTerm = useMemo(() => 
+    sections.filter(section => section.Term == selectedTerm.Name), [sections, selectedTerm]);
 
+  // When the course number, selected course, or selected term change, update the display
   useEffect(() => {
     setLoading(true)
     setError(null)
@@ -35,6 +47,7 @@ export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {cours
       .finally(() => setLoading(false))
   }, [courseNumber, selectedCourseSection, selectedTerm])
 
+  // When the course number, or course section changes, updates the sections displayed
   useEffect(() => {
     setLoadingSections(true)
     getCourseSections({courseNumber: courseNumber, sectionNumber: courseSection})
@@ -89,6 +102,9 @@ export const CourseDisplay = ({courseNumber, courseSection, term, terms}: {cours
     </Box>)
 }
 
+/**
+ * A TSX component that enrollment data for sections of a course 
+ */
 const SectionDemand = ({course}: {course: Course}) => {
   const openSeats = parseInt(course.OpenSeats);
   const filledSeats = parseInt(course.MaxSeats) - openSeats;
@@ -107,6 +123,9 @@ const SectionDemand = ({course}: {course: Course}) => {
   />
 }
 
+/**
+ * A TSX component that displays data for couses ollated by semester offered 
+ */
 const CourseHistory = ({sections}: {sections: Course[]}) => {
   const terms = useMemo(() => sections.map(course => course.Term), [sections])
 

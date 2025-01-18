@@ -10,30 +10,48 @@ import { CourseDisplay } from "./CourseDisplay";
 import { APIError } from "./APIError";
 import { CourseTable } from "./CourseTable";
 
+/**
+ * The main component that handles the SIS search and display functions 
+ */
 const SISState = () => {
   const [loading, setLoading] = useState<boolean>(true)
+
+  // The list of schools in SIS
   const [schools, setSchools] = useState<Array<School>>([])
+
+  // The list of terms in SIS
   const [terms, setTerms] = useState<Array<Term>>([])
 
+  // The schools selected to search
   const [selectedSchools, setSelectedSchools] = useState<Array<School>>([])
+
+  // The departments selected to search
   const [selectedDepartments, setSelectedDeparments] = useState<Array<Department>>([])
+
+  // The terms selected to search
   const [selectedTerms, setSelectedTerms] = useState<Array<Term>>([])
 
+  // List of courses that satisfy the search requirements
   const [courses, setCourses] = useState<Array<Course>>([])
 
+  // List of fields to display
   const [headers, setHeaders] = useState<ColumnMeta[]>(DefaultColumns)
 
+  // A selected course if one is selected a for detailed information
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
 
   const [error, setError] = useState<Error | null>(null)
 
+  // When this components load, we should request the list of schools, departments, and terms from SIS
   useEffect(() => {
+    // Clear the error
     setError(null)
+
     const promisedSchools = getSchools()
       .then(result => {
         const schools = result.data
-
                
+        // Get all of the departments in the schools
         return Promise.all(schools.map(school =>
           getDepartments({ school: school.Name }).then(departments => {
             return {
@@ -48,11 +66,15 @@ const SISState = () => {
     const promisedTerms = getTerms()
       .then(result => setTerms(result.data))
 
+    // Wait for both of these promises
     Promise.all([promisedSchools, promisedTerms])
       .catch(setError)
       .finally(() => setLoading(false))
   }, [])
 
+  /**
+   * Search SIS for the courses within the selected schools, departments, and terms
+   */
   const getCourses = () => {
     setError(null)
     setLoading(true)
@@ -86,7 +108,7 @@ const SISState = () => {
           <Container
             sx={selectContainerStyle}
           >
-                      <Typography variant="h3">Search Courses:</Typography>
+            <Typography variant="h3">Search Courses:</Typography>
             <Stack
               spacing={1}
             >
@@ -135,15 +157,15 @@ const SISState = () => {
 
           {courses.length > 0 &&
                       <Container className='ag-theme-quartz' sx={{ height: "50em", width: "90%" }}>
-              <Select<Labeled<ColumnMeta>, true, GroupBase<Labeled<ColumnMeta>>>
-                isMulti
-                styles={menuStyle}
-                options={Object.values(CourseHeader).map(header => ({value: header, label: header.readableName}))}
-                defaultValue={DefaultColumns.map(column => ({value: column, label: column.readableName}))}
-                onChange={selection => setHeaders(selection.map(column => column.value))}
-              />
-              <CourseTable courses={courses} headers={headers} onCourseSelected={setSelectedCourse}/>
-            </Container>
+                        <Select<Labeled<ColumnMeta>, true, GroupBase<Labeled<ColumnMeta>>>
+                          isMulti
+                          styles={menuStyle}
+                          options={Object.values(CourseHeader).map(header => ({value: header, label: header.readableName}))}
+                          defaultValue={DefaultColumns.map(column => ({value: column, label: column.readableName}))}
+                          onChange={selection => setHeaders(selection.map(column => column.value))}
+                        />
+                        <CourseTable courses={courses} headers={headers} onCourseSelected={setSelectedCourse}/>
+                      </Container>
           }
         </div>}
       <Dialog
