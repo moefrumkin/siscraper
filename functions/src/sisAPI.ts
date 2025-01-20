@@ -63,7 +63,9 @@ export const formatCourseQuery = (query: CourseQuery) => (
     query.departments.map((department: Department) => (
       `School=${department.SchoolName}\
         &Department=${department.DepartmentName}`
-    )).join("&")].
+    )).join("&"),
+    (query.title == undefined? "": `CourseTitle=${query.title}`)
+  ].
     filter((term) => term.length != 0)
     .join("&")
 );

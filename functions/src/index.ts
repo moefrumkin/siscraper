@@ -79,7 +79,7 @@ export const searchCourses = onCall((context) => {
     throw new HttpsError("invalid-argument", "Malformed search request");
   }
 
-  // This handles course queries that do no require a specific term
+  // This handles course queries that do not specify departments
   if (query.departments.length == 0 && query.schools.length == 0) {
     return queryCourses(query)
       .catch(handleInternalError);
@@ -88,9 +88,11 @@ export const searchCourses = onCall((context) => {
     return Promise.all([
       query.schools.map((school: string) => queryCourses({
         terms: query.terms, schools: [school], departments: [],
+        title: query?.title || undefined
       })),
       query.departments.map((department: Department) => queryCourses({
         terms: query.terms, schools: [], departments: [department],
+        title: query?.title || undefined
       }))].flat()).then((result) => {
       return result.flat(1);
     }).catch(handleInternalError);
