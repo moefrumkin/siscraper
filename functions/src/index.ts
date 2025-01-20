@@ -36,8 +36,8 @@ import {
 // });
 
 /**
- * General error handling function. Logs and error and sends it to the client. 
- * @param error The error to be logged and sent to the client
+ * General error handling function. Logs and error and sends it to the client.
+ * @param {Error} error The error to be logged and sent to the client
  */
 const handleInternalError = (error: Error) => {
   logger.log(error);
@@ -88,11 +88,11 @@ export const searchCourses = onCall((context) => {
     return Promise.all([
       query.schools.map((school: string) => queryCourses({
         terms: query.terms, schools: [school], departments: [],
-        title: query?.title || undefined
+        title: query?.title || undefined,
       })),
       query.departments.map((department: Department) => queryCourses({
         terms: query.terms, schools: [], departments: [department],
-        title: query?.title || undefined
+        title: query?.title || undefined,
       }))].flat()).then((result) => {
       return result.flat(1);
     }).catch(handleInternalError);
@@ -115,7 +115,7 @@ export const getCourseDetails = onCall((context) => {
 });
 
 /**
- * Sends the client detailed descriptions of each section of a course in the same semester
+ * Sends the client detailed descriptions of each section of a course
  */
 export const getCourseSections = onCall((context) => {
   const query = context.data;
