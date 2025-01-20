@@ -21,6 +21,7 @@ module.exports = {
   ignorePatterns: [
     "/lib/**/*", // Ignore built files.
     "/generated/**/*", // Ignore generated files.
+    "shared/**", // Ignore shared library
     "jest.config.js",
   ],
   plugins: [
