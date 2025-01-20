@@ -121,16 +121,29 @@ export type Prerequisite = {
 export type SearchQuery = {
     terms: string[],
     schools: string[],
-    departments: Department[]
+    departments: Department[],
+    title?: string
 }
 
 /**
  * Similar to SearchQuery
+ * TODO: use a single data structure to represent searches
  */
 export type CourseQuery = {
     terms: Array<string>,
     schools: Array<string>,
-    departments: Array<Department>
+    departments: Array<Department>,
+    title?: string
+}
+
+/**
+ * Represents a searech for a course that can be performed in a single API call
+ */
+export type SimpleCourseSearch = {
+  term?: string,
+  school?: string,
+  department?: string,
+  title?: string
 }
 
 /**

@@ -5,7 +5,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css"
 import { School, Term, Department, Course, ColumnMeta, DefaultColumns, CourseHeader, Labeled } from "siscraper-shared";
 import { Loading } from "./Loading";
-import { Button, Container, Dialog, DialogContent, DialogTitle, Stack, Typography } from "@mui/material";
+import { Box, Button, Container, Dialog, DialogContent, DialogTitle, Stack, TextField, Typography } from "@mui/material";
 import { CourseDisplay } from "./CourseDisplay";
 import { APIError } from "./APIError";
 import { CourseTable } from "./CourseTable";
@@ -30,6 +30,9 @@ const SISState = () => {
 
   // The terms selected to search
   const [selectedTerms, setSelectedTerms] = useState<Array<Term>>([])
+
+  // A string to search in the course title. Empty means no title specified
+  const [courseTitle, setCourseTitle] = useState<string>("")
 
   // List of courses that satisfy the search requirements
   const [courses, setCourses] = useState<Array<Course>>([])
@@ -81,7 +84,8 @@ const SISState = () => {
     searchCourses({
       terms: selectedTerms.map(term => term.Name),
       schools: selectedSchools.map(school => school.Name),
-      departments: selectedDepartments
+      departments: selectedDepartments,
+      title: courseTitle
     })
       .then(result => setCourses(result.data))
       .catch(setError)
@@ -147,6 +151,15 @@ const SISState = () => {
                 placeholder="Terms..."
               />
             </Stack>
+
+
+            <Box sx={{m: 2}}>
+              <TextField
+                label="Course Title"
+                value={courseTitle}
+                onChange={event => setCourseTitle(event.target.value)}
+              ></TextField>
+            </Box>
  
             <Button onClick={getCourses}>Search</Button>
             <Button onClick={() => {setCourses([]); setError(null)}}>Clear</Button>
